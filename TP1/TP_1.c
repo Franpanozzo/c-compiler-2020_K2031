@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+//codigo final
 int determinarColumna(char caracter);
 
 void escribirTipoEnArchivo (char * s, FILE * archivo);

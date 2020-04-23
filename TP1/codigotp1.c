@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h>      //esta version no
 
 int determinarColumna(char caracter);
 
