@@ -96,6 +96,8 @@ int main()
     {
         printf("La expresion no es sintacticamente correcta");
     }
+
+    return 0; 
 }
 
 int esEstadoFinal(int estado, char cimaDePila)
