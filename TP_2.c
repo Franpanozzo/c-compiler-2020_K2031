@@ -10,10 +10,10 @@ typedef struct {
     char cadenaPush[2+1];
 } est;
 
-   struct nodo{
-    nodo* sgte;
+typedef struct _nodo{
+    struct _nodo* sgte;
     char info;
-};
+} nodo;
 
 int determinarColumna(char caracter);
 
@@ -25,33 +25,21 @@ void push (nodo** pila, char x);
 
 char pop (nodo** pila);
 
-
-    
 int main()
 {
-    char* exp;
+    char exp [20];
     printf("Ingrese la expresion a evaluar: ");
     scanf("%s",exp);
 
-
-//TT [3][2][5]
-
-//struct Cliente {int i; char str[20]; double d;} s = {33, "Pepe Lopez", 3.14 }
-
-
     est trans [6][5] = {
-        {{3, "$"},{1, "$"}, {3, "$"}, {0, "R$"}, {3, "$"}},// q0 $
-        {{1, "$"}, {1, "$"}, {0, "$"}, {3, "$"}, {3, "$"}},// q1 $
-        {{3, "R"}, {1, "R"}, {3, "$"}, {0, "RR"}, {3, "R"}},// q0 R
-        {{1, "R"}, {1, "R"}, {0, "R"}, {3, "R"}, {2, ""}},// q1 R
-        {{3, "R"}, {3, "R"}, {0, "R"}, {3, "R"}, {2, ""}},// q2 R
-        {{3, "$"}, {3, "$"}, {0, "$"}, {3, "$"}, {3, "$"}},// q2 $
+        {{3, "$"},{1, "$"}, {3, "$"}, {0, "R$"}, {3, "$"}},  // q0 $
+        {{1, "$"}, {1, "$"}, {0, "$"}, {3, "$"}, {3, "$"}},  // q1 $
+        {{3, "R"}, {1, "R"}, {3, "$"}, {0, "RR"}, {3, "R"}}, // q0 R
+        {{1, "R"}, {1, "R"}, {0, "R"}, {3, "R"}, {2, ""}},   // q1 R
+        {{3, "R"}, {3, "R"}, {0, "R"}, {3, "R"}, {2, ""}},   // q2 R
+        {{3, "$"}, {3, "$"}, {0, "$"}, {3, "$"}, {3, "$"}},  // q2 $
         };
-/*
-        {{3, "$"}, {3, "$"}, {3, "$"}, {3, "$"}, {3, "$"}},// q3 $
-        {{3, "R"}, {3, "R"}, {3, "R"}, {3, "R"}, {3, "R"}}//q3 R
-    };
-*/
+
 
     int columna;
     int fila;
@@ -59,29 +47,27 @@ int main()
     est estadoDeTabla;
     int i = 0, j=0;
     char caracterActual = exp[i];
-    printf("%s", exp[i]);
     nodo* pila;
     push (&pila, '$');
     char cimaDePila;
-
     while (caracterActual != '\0')
     {
         cimaDePila = pop(&pila);
         columna = determinarColumna(caracterActual);
         fila = determinarFila(estadoActual , cimaDePila);
         estadoDeTabla = trans[fila][columna];
-        estadoActual = estadoDeTabla.estadoSiguiente;        
+        estadoActual = estadoDeTabla.estadoSiguiente;
         if (estadoDeTabla.estadoSiguiente == 3)
         {
             printf("Hubo un error de sintaxis en la posicion %d\n", j);
             break;
         }
 
-        for(int h = 0; h < strlen(estadoDeTabla.cadenaPush); h++)
+        for(int h = strlen(estadoDeTabla.cadenaPush) - 1; h >= 0 ; h--)
         {
             push(&pila, estadoDeTabla.cadenaPush[h]);
         }
-        
+
         j++;
         caracterActual = exp[++i];
     }
@@ -90,14 +76,14 @@ int main()
 
     if(esEstadoFinal(estadoActual, cimaDePila))
     {
-        printf("La expresión es sintáctivamente correcta :D\n", j);
+        printf("La expresion es sintacticamente correcta :D\n", j);
     }
     else
     {
         printf("La expresion no es sintacticamente correcta");
     }
 
-    return 0; 
+    return 0;
 }
 
 int esEstadoFinal(int estado, char cimaDePila)
@@ -120,7 +106,6 @@ void push (nodo** pila, char x)
     p -> info = x;
     p -> sgte = *pila ;
     *pila = p;
-    //return ;   
 }
 
 char pop (nodo** pila)
