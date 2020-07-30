@@ -115,7 +115,7 @@ SUFIJO_REAL [lLfF]
 SUFIJO_ENTERO [uULl]
 PALABRA_RESERVADA "auto"|"case"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"int"|"long"|"register"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"
 CARACTER_C [^\\]
-SECUENCIA_DE_ESCAPE "\'"|"\?"|"\\"|"\a"|"\b"|"\f"|"\n"|"\r"|"\t"|"\v"
+SECUENCIA_DE_ESCAPE "\\'"|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
 
 
 
@@ -125,7 +125,7 @@ SECUENCIA_DE_ESCAPE "\'"|"\?"|"\\"|"\a"|"\b"|"\f"|"\n"|"\r"|"\t"|"\v"
 0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {printf("Encontre una constante entera hexadecimal \n");}
 {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{PARTE_EXPONENTE}?{SUFIJO_REAL}? {printf("Encontre una constante real. \n");}
 {PALABRA_RESERVADA} {printf("Encontre una palabra reservada. \n");}
-\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {printf("Encontre una constante caracter. \n");}
+\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {printf("Encontre una constante caracter: %s \n", yytext);}
 [a-zA-Z_][a-zA-Z0-9_]* {procesarIdentificador(yytext);}
 "++"|[*+&!/%<:=]|"<="|"=="|"!="|"&&"|"||"|"?"|"+=" {printf("Encontre un caracter de puntuacion. \n");}
 \"([^\"]*)\" {procesarLiteralCadena(yytext,yyleng);}
