@@ -518,15 +518,13 @@ void procesarLiteralCadena (char* id, int longitud)
 void insertarOrdenado(char* id)
 {
     tLista nodoActivo = listaDeIdentificadores;
-
     tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
     tInfo informacion = {};
-    printf("1");
-    informacion.identificador = id;
-    printf("2");
-    informacion.contador = 0;
+    informacion.identificador = (char*) malloc((strlen(id) + 1) * sizeof(char));
+
+    strcpy(informacion.identificador, id);
+    informacion.contador = 1;
     pNuevoNodo->info = informacion;
-    printf("Voy a agregar la siguiente informacion: %s \n", pNuevoNodo->info.identificador);
 
     if(listaDeIdentificadores)
     {
@@ -560,13 +558,11 @@ void buscarYContar (char* id)
         while (nodoActivo -> siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
         {
             nodoActivo = nodoActivo->siguiente;
-            printf("lo");
         }
 
         if(strcmp(nodoActivo->info.identificador, id) == 0)
         {
             nodoActivo->info.contador++;
-            printf("ENCONTRE: %s \n", id);
         }
         else
         {
@@ -587,13 +583,13 @@ void procesarIdentificador(char* id)
     tLista nodoActivo = listaDeIdentificadores;
     while (nodoActivo)
     {
-        printf("-> %s \n", nodoActivo->info.identificador);
+        printf("-> %s : %i\n", nodoActivo->info.identificador, nodoActivo->info.contador);
         nodoActivo = nodoActivo->siguiente;
     }
 }
 
 
-#line 597 "lex.yy.c"
+#line 593 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -744,9 +740,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 145 "TP_3.l"
+#line 141 "TP_3.l"
 
-#line 750 "lex.yy.c"
+#line 746 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -831,55 +827,55 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 146 "TP_3.l"
+#line 142 "TP_3.l"
 {printf("Encontre una constante entera decimal \n");}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 147 "TP_3.l"
+#line 143 "TP_3.l"
 {printf("Encontre una constante entera octal \n");}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 148 "TP_3.l"
+#line 144 "TP_3.l"
 {printf("Encontre una constante entera hexadecimal \n");}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 149 "TP_3.l"
+#line 145 "TP_3.l"
 {printf("Encontre una constante real. \n");}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 150 "TP_3.l"
+#line 146 "TP_3.l"
 {printf("Encontre una palabra reservada. \n");}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 151 "TP_3.l"
+#line 147 "TP_3.l"
 {printf("Encontre una constante caracter: %s \n", yytext);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 152 "TP_3.l"
+#line 148 "TP_3.l"
 {procesarIdentificador(yytext);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 153 "TP_3.l"
+#line 149 "TP_3.l"
 {printf("Encontre un caracter de puntuacion. \n");}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 154 "TP_3.l"
+#line 150 "TP_3.l"
 {procesarLiteralCadena(yytext,yyleng);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 156 "TP_3.l"
+#line 152 "TP_3.l"
 ECHO;
 	YY_BREAK
-#line 883 "lex.yy.c"
+#line 879 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1765,7 +1761,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 156 "TP_3.l"
+#line 152 "TP_3.l"
 
 
 int main() {

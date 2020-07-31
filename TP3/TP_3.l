@@ -50,13 +50,13 @@ void procesarLiteralCadena (char* id, int longitud)
 void insertarOrdenado(char* id)
 {
     tLista nodoActivo = listaDeIdentificadores;
-//COPIAR EL char* Id para que apunte a otro lado?
     tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
     tInfo informacion = {};
-    informacion.identificador = id;
-    informacion.contador = 0;
+    informacion.identificador = (char*) malloc((strlen(id) + 1) * sizeof(char));
+
+    strcpy(informacion.identificador, id);
+    informacion.contador = 1;
     pNuevoNodo->info = informacion;
-    printf("Voy a agregar la siguiente informacion: %s \n", pNuevoNodo->info.identificador);
 
     if(listaDeIdentificadores)
     {
@@ -90,13 +90,11 @@ void buscarYContar (char* id)
         while (nodoActivo -> siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
         {
             nodoActivo = nodoActivo->siguiente;
-            printf("lo");
         }
 
         if(strcmp(nodoActivo->info.identificador, id) == 0)
         {
             nodoActivo->info.contador++;
-            printf("ENCONTRE: %s \n", id);
         }
         else
         {
@@ -117,7 +115,7 @@ void procesarIdentificador(char* id)
     tLista nodoActivo = listaDeIdentificadores;
     while (nodoActivo)
     {
-        printf("-> %s \n", nodoActivo->info.identificador);
+        printf("-> %s : %i\n", nodoActivo->info.identificador, nodoActivo->info.contador);
         nodoActivo = nodoActivo->siguiente;
     }
 }
