@@ -33,6 +33,7 @@ typedef nodo* tLista;
 typedef nodoCadena* tPilaCadena;
 
 tPilaCadena pilaCadenas;
+tLista listaDeIdentificadores = NULL;
 
 void procesarLiteralCadena (char* id, int longitud)
 {
@@ -46,15 +47,19 @@ void procesarLiteralCadena (char* id, int longitud)
     p -> siguiente = pilaCadenas ;
     pilaCadenas = p;
 }
-void insertarOrdenado(tLista lista, char* id)
+void insertarOrdenado(char* id)
 {
+    tLista nodoActivo = listaDeIdentificadores;
+//COPIAR EL char* Id para que apunte a otro lado?
     tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
-    tInfo informacion = {id,0};
+    tInfo informacion = {};
+    informacion.identificador = id;
+    informacion.contador = 0;
     pNuevoNodo->info = informacion;
+    printf("Voy a agregar la siguiente informacion: %s \n", pNuevoNodo->info.identificador);
 
-    if(lista)
+    if(listaDeIdentificadores)
     {
-        tLista nodoActivo = lista;
         while(nodoActivo->siguiente && strcmp(nodoActivo->siguiente->info.identificador, id) < 0)
         {
             nodoActivo = nodoActivo -> siguiente;
@@ -67,38 +72,54 @@ void insertarOrdenado(tLista lista, char* id)
         else
         {
             nodoActivo->siguiente = pNuevoNodo;
+            pNuevoNodo->siguiente = NULL;
         }
     }
     else
     {
-        lista = pNuevoNodo;
+        pNuevoNodo->siguiente = NULL;
+        listaDeIdentificadores = pNuevoNodo;
     }
 }
-void buscarYContar (tLista lista, char* id)
+void buscarYContar (char* id)
 {
-    tLista nodoActivo = lista;
+    tLista nodoActivo = listaDeIdentificadores;
 
-    while (nodoActivo -> siguiente && strcmp(lista->info.identificador, id) != 0)
+    if(listaDeIdentificadores)
     {
-        nodoActivo = nodoActivo->siguiente;
-    }
+        while (nodoActivo -> siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
+        {
+            nodoActivo = nodoActivo->siguiente;
+            printf("lo");
+        }
 
-    if(strcmp(lista->info.identificador, id) == 0)
-    {
-        nodoActivo->info.contador++;
+        if(strcmp(nodoActivo->info.identificador, id) == 0)
+        {
+            nodoActivo->info.contador++;
+            printf("ENCONTRE: %s \n", id);
+        }
+        else
+        {
+            insertarOrdenado(id);
+        }
     }
     else
     {
-        insertarOrdenado(lista, id);
+        insertarOrdenado(id);
     }
 }
 void procesarIdentificador(char* id)
 {
-    tLista listaDeIdentificadores;
+    printf("Encontre un identificador: %s\n", id);
 
-    listaDeIdentificadores = malloc(sizeof(tLista));
+    buscarYContar(id);
 
-    buscarYContar(listaDeIdentificadores, id);
+    tLista nodoActivo = listaDeIdentificadores;
+    while (nodoActivo)
+    {
+        printf("-> %s \n", nodoActivo->info.identificador);
+        nodoActivo = nodoActivo->siguiente;
+    }
 }
 
 

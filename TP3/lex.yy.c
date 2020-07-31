@@ -501,6 +501,7 @@ typedef nodo* tLista;
 typedef nodoCadena* tPilaCadena;
 
 tPilaCadena pilaCadenas;
+tLista listaDeIdentificadores = NULL;
 
 void procesarLiteralCadena (char* id, int longitud)
 {
@@ -514,15 +515,21 @@ void procesarLiteralCadena (char* id, int longitud)
     p -> siguiente = pilaCadenas ;
     pilaCadenas = p;
 }
-void insertarOrdenado(tLista lista, char* id)
+void insertarOrdenado(char* id)
 {
-    tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
-    tInfo informacion = {id,0};
-    pNuevoNodo->info = informacion;
+    tLista nodoActivo = listaDeIdentificadores;
 
-    if(lista)
+    tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
+    tInfo informacion = {};
+    printf("1");
+    informacion.identificador = id;
+    printf("2");
+    informacion.contador = 0;
+    pNuevoNodo->info = informacion;
+    printf("Voy a agregar la siguiente informacion: %s \n", pNuevoNodo->info.identificador);
+
+    if(listaDeIdentificadores)
     {
-        tLista nodoActivo = lista;
         while(nodoActivo->siguiente && strcmp(nodoActivo->siguiente->info.identificador, id) < 0)
         {
             nodoActivo = nodoActivo -> siguiente;
@@ -535,42 +542,58 @@ void insertarOrdenado(tLista lista, char* id)
         else
         {
             nodoActivo->siguiente = pNuevoNodo;
+            pNuevoNodo->siguiente = NULL;
         }
     }
     else
     {
-        lista = pNuevoNodo;
+        pNuevoNodo->siguiente = NULL;
+        listaDeIdentificadores = pNuevoNodo;
     }
 }
-void buscarYContar (tLista lista, char* id)
+void buscarYContar (char* id)
 {
-    tLista nodoActivo = lista;
+    tLista nodoActivo = listaDeIdentificadores;
 
-    while (nodoActivo -> siguiente && strcmp(lista->info.identificador, id) != 0)
+    if(listaDeIdentificadores)
     {
-        nodoActivo = nodoActivo->siguiente;
-    }
+        while (nodoActivo -> siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
+        {
+            nodoActivo = nodoActivo->siguiente;
+            printf("lo");
+        }
 
-    if(strcmp(lista->info.identificador, id) == 0)
-    {
-        nodoActivo->info.contador++;
+        if(strcmp(nodoActivo->info.identificador, id) == 0)
+        {
+            nodoActivo->info.contador++;
+            printf("ENCONTRE: %s \n", id);
+        }
+        else
+        {
+            insertarOrdenado(id);
+        }
     }
     else
     {
-        insertarOrdenado(lista, id);
+        insertarOrdenado(id);
     }
 }
 void procesarIdentificador(char* id)
 {
-    tLista listaDeIdentificadores;
+    printf("Encontre un identificador: %s\n", id);
 
-    listaDeIdentificadores = malloc(sizeof(tLista));
+    buscarYContar(id);
 
-    buscarYContar(listaDeIdentificadores, id);
+    tLista nodoActivo = listaDeIdentificadores;
+    while (nodoActivo)
+    {
+        printf("-> %s \n", nodoActivo->info.identificador);
+        nodoActivo = nodoActivo->siguiente;
+    }
 }
 
 
-#line 574 "lex.yy.c"
+#line 597 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -721,9 +744,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 122 "TP_3.l"
+#line 145 "TP_3.l"
 
-#line 727 "lex.yy.c"
+#line 750 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -808,55 +831,55 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 123 "TP_3.l"
+#line 146 "TP_3.l"
 {printf("Encontre una constante entera decimal \n");}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 124 "TP_3.l"
+#line 147 "TP_3.l"
 {printf("Encontre una constante entera octal \n");}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 125 "TP_3.l"
+#line 148 "TP_3.l"
 {printf("Encontre una constante entera hexadecimal \n");}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 126 "TP_3.l"
+#line 149 "TP_3.l"
 {printf("Encontre una constante real. \n");}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 127 "TP_3.l"
+#line 150 "TP_3.l"
 {printf("Encontre una palabra reservada. \n");}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 128 "TP_3.l"
+#line 151 "TP_3.l"
 {printf("Encontre una constante caracter: %s \n", yytext);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 129 "TP_3.l"
+#line 152 "TP_3.l"
 {procesarIdentificador(yytext);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 130 "TP_3.l"
+#line 153 "TP_3.l"
 {printf("Encontre un caracter de puntuacion. \n");}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 131 "TP_3.l"
+#line 154 "TP_3.l"
 {procesarLiteralCadena(yytext,yyleng);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 133 "TP_3.l"
+#line 156 "TP_3.l"
 ECHO;
 	YY_BREAK
-#line 860 "lex.yy.c"
+#line 883 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1742,7 +1765,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 133 "TP_3.l"
+#line 156 "TP_3.l"
 
 
 int main() {
