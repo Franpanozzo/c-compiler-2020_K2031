@@ -1,1 +1,11 @@
-hola como estas hola hola como
+int main(){
+    float x = 2.3 + 5E-6; 
+    char t[50];
+    printf("Decime el valor de la variable: ");
+    gets(t);
+    printf("El valor es: %s",t);
+    char* p;
+    return 0;
+    /* que onda papurri  */
+   
+}

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//---IDENTIFICADORES
 typedef struct tInfo
 {
     char* identificador;
@@ -17,9 +18,10 @@ typedef struct nodo
     struct nodo*  siguiente;
 }nodo;
 
+//---CADENAS
 typedef struct tInfoCadena
 {
-    char* identificador;
+    char* cadena;
     int contador;
 }tInfoCadena;
 
@@ -29,34 +31,54 @@ typedef struct nodoCadena
     struct nodoCadena*  siguiente;
 }nodoCadena;
 
+//---PALABRAS RESERVADAS
+
+typedef struct nodoPalRes
+{
+    char* palRes;
+    struct nodoPalRes* siguiente;
+}nodoPalRes;
+
+// Constantes
+typedef struct nodoConstantes
+{
+    char tipo;
+    char* constante;
+}nodoConstantes;
+
+typedef nodoConstantes* tListaConstantes; 
 typedef nodo* tLista;
 typedef nodoCadena* tPilaCadena;
+typedef nodoPalRes* tColaPalRes;
 
-tPilaCadena pilaCadenas;
+tColaPalRes listaPalRes = NULL;
+tColaPalRes listaPalResUltimo = NULL;
+tPilaCadena pilaCadenas = NULL;
 tLista listaDeIdentificadores = NULL;
 
 void procesarLiteralCadena (char* id, int longitud)
 {
     tPilaCadena p = (tPilaCadena) malloc(sizeof(nodoCadena));
-
-    //tInfoCadena nuevaInformacion = malloc(sizeof(tInfoCadena));
-    //nuevaInformacion -> 
-
-    strcpy(p -> info.identificador, id);
+    p->info.cadena = strdup(id);
     p -> info.contador = longitud;
-    p -> siguiente = pilaCadenas ;
+    p -> siguiente = pilaCadenas;
     pilaCadenas = p;
+    tPilaCadena nodoActivo = pilaCadenas;
+
+    while(nodoActivo){
+        printf("Se encontra la cadena: %s , de longitud %i\n",p->info.cadena,p->info.contador);
+        nodoActivo = nodoActivo -> siguiente;
+    }
 }
 void insertarOrdenado(char* id)
 {
     tLista nodoActivo = listaDeIdentificadores;
     tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
     tInfo informacion = {};
-    informacion.identificador = (char*) malloc((strlen(id) + 1) * sizeof(char));
+    pNuevoNodo->info.identificador = strdup(id);
+    pNuevoNodo->info.contador = 1;
 
-    strcpy(informacion.identificador, id);
-    informacion.contador = 1;
-    pNuevoNodo->info = informacion;
+
 
     if(listaDeIdentificadores)
     {
@@ -113,13 +135,65 @@ void procesarIdentificador(char* id)
     buscarYContar(id);
 
     tLista nodoActivo = listaDeIdentificadores;
-    while (nodoActivo)
+}
+
+void procesarPalabraReservada(char* pr)
+{
+    tColaPalRes p = (tColaPalRes) malloc(sizeof(nodoPalRes));
+     p->palRes = strdup(pr);
+
+    if(listaPalRes)
     {
-        printf("-> %s : %i\n", nodoActivo->info.identificador, nodoActivo->info.contador);
-        nodoActivo = nodoActivo->siguiente;
+        listaPalResUltimo->siguiente = p;
+        listaPalResUltimo = p;
+        p->siguiente = NULL;
+    }
+    else
+    {
+        listaPalResUltimo = p;
+        p->siguiente = NULL;
+        listaPalRes = p;
     }
 }
 
+char* desencolarNodo()
+{
+    tColaPalRes p = listaPalRes;
+    listaPalRes = listaPalRes->siguiente;
+    char* id = strdup(p->palRes);
+    free(p);
+    return id;
+}
+
+void imprimirListaPalabrasReservadas()
+{
+    char* informacion;
+
+    printf("\n>>>LISTADO DE PALABRAS RESERVADAS<<<\n\n");
+    while(listaPalRes)
+    {
+        informacion = desencolarNodo();
+        printf("Palabra reservada: %s \n",informacion);
+    }
+}
+
+void procesarConstanteOctal(char* id)
+{
+tListaConstantes p = (tListaConstantes) malloc(sizeof(nodoConstantes));
+
+}
+void procesarConstanteDecimal(char* id)
+{
+
+}
+void procesarConstanteHexadecimal(char* id)
+{
+
+}
+void procesarConstanteReal(char* id)
+{
+
+}
 
 %}
 
@@ -132,31 +206,32 @@ SIGNO [+-]
 PARTE_EXPONENTE [Ee]{SIGNO}?{DIGITO_DECIMAL}+
 SUFIJO_REAL [lLfF]
 SUFIJO_ENTERO [uULl]
-PALABRA_RESERVADA "auto"|"case"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"int"|"long"|"register"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"
+PALABRA_RESERVADA "auto"|"case"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"int"|"long"|"register"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"|"char"
 CARACTER_C [^\\]
 SECUENCIA_DE_ESCAPE "\\'"|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
 
 
 
 %%
-[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {printf("Encontre una constante entera decimal \n");}
-0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {printf("Encontre una constante entera octal \n");}
-0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {printf("Encontre una constante entera hexadecimal \n");}
-{DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{PARTE_EXPONENTE}?{SUFIJO_REAL}? {printf("Encontre una constante real. \n");}
-{PALABRA_RESERVADA} {printf("Encontre una palabra reservada. \n");}
+[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {procesarConstanteDecimal(yytext); printf("Encontre una constante entera decimal: %s \n", yytext);}
+0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {procesarConstanteOctal(yytext);printf("Encontre una constante entera octal: %s \n", yytext);}
+0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {procesarConstanteHexa(yytext); printf("Encontre una constante entera hexadecimal: %s\n", yytext);}
+{DIGITO_DECIMAL}+(\.{DIGITO_DECIMAL}*)?{PARTE_EXPONENTE}?{SUFIJO_REAL}? {procesarConstanteReal(yytext);printf("Encontre una constante real: %s \n", yytext);}
+{PALABRA_RESERVADA} {procesarPalabraReservada(yytext); printf("---->Encontre una palabra reservada: %s \n", yytext);}
 \'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {printf("Encontre una constante caracter: %s \n", yytext);}
-[a-zA-Z_][a-zA-Z0-9_]* {procesarIdentificador(yytext);}
-"++"|[*+&!/%<:=]|"<="|"=="|"!="|"&&"|"||"|"?"|"+=" {printf("Encontre un caracter de puntuacion. \n");}
+[a-zA-Z_][a-zA-Z0-9_]* {procesarIdentificador(yytext); printf("Se encontro un identificador: %s\n", yytext);}
+"++"|[*+&!,;/%<:=]|"<="|"=="|"!="|"&&"|"||"|"?"|"+="|"{"|"}"|"["|"]"|"("|")" {printf("Encontre un caracter de puntuacion: %s\n", yytext);}
 \"([^\"]*)\" {procesarLiteralCadena(yytext,yyleng);}
+"/*"([^*]|\*+[^/])*\*+\/ {printf("Se encontro un comentario de multiple linea.\n");}
 
 %%
 
 int main() {
-   
     yyin = fopen("entrada.txt", "r");
     yyout = fopen("salida.txt", "w");
     yylex();
 	
+    imprimirListaPalabrasReservadas();
     return 0;
 }
 
