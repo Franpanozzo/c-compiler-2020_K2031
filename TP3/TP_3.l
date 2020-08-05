@@ -40,10 +40,16 @@ typedef struct nodoPalRes
 }nodoPalRes;
 
 // Constantes
-typedef struct nodoConstantes
+typedef struct tInfoConstantes
 {
     char tipo;
     char* constante;
+}tInfoConstantes;
+
+typedef struct nodoConstantes
+{
+    tInfoConstantes info;
+    struct nodoConstantes* siguiente;
 }nodoConstantes;
 
 typedef nodoConstantes* tListaConstantes; 
@@ -55,6 +61,7 @@ tColaPalRes listaPalRes = NULL;
 tColaPalRes listaPalResUltimo = NULL;
 tPilaCadena pilaCadenas = NULL;
 tLista listaDeIdentificadores = NULL;
+tListaConstantes listaDeConstantes = NULL;
 
 void procesarLiteralCadena (char* id, int longitud)
 {
@@ -156,13 +163,22 @@ void procesarPalabraReservada(char* pr)
     }
 }
 
-char* desencolarNodo()
+char* desencolarNodoPalabraReservada()
 {
     tColaPalRes p = listaPalRes;
     listaPalRes = listaPalRes->siguiente;
     char* id = strdup(p->palRes);
     free(p);
     return id;
+}
+
+tInfoConstantes desencolarNodoConstante()
+{
+    tListaConstantes p = listaDeConstantes;
+    listaDeConstantes = listaDeConstantes->siguiente;
+    tInfoConstantes informacion = p->info;
+    free(p);
+    return informacion;
 }
 
 void imprimirListaPalabrasReservadas()
@@ -172,27 +188,54 @@ void imprimirListaPalabrasReservadas()
     printf("\n>>>LISTADO DE PALABRAS RESERVADAS<<<\n\n");
     while(listaPalRes)
     {
-        informacion = desencolarNodo();
+        informacion = desencolarNodoPalabraReservada();
         printf("Palabra reservada: %s \n",informacion);
     }
 }
 
-void procesarConstanteOctal(char* id)
+void procesarConstante(char* id, char tipo)
 {
-tListaConstantes p = (tListaConstantes) malloc(sizeof(nodoConstantes));
+    tListaConstantes p = (tListaConstantes) malloc(sizeof(nodoConstantes));
+    p->tipo = tipo;
+    p->constante = strdup(id);
 
+    if(listaDeConstantes)
+    {
+        listaDeConstantesUltimo->siguiente = p;
+        listaDeConstantesUltimo = p;
+        p->siguiente = NULL;
+    }
+    else
+    {
+        listaDeConstantesUltimo = p;
+        p->siguiente = NULL;
+        listaDeConstantes = p;
+    }
 }
-void procesarConstanteDecimal(char* id)
-{
 
-}
-void procesarConstanteHexadecimal(char* id)
+void imprimirListaDeConstantes()
 {
+    char* informacion;
+    int parteEntera;
+    printf("\n>>>LISTADO DE CONSTANTES<<<\n\n");
+    while(listaDeConstantes)
+    {
+        informacion = desencolarNodoConstante();
+        switch(informacion.tipo)
+        {
+            case 'o':
+                printf("Constante octal: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 8));
+            case 'h':
+                printf("Constante hexa: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 16));
+            case 'r': 
+            "-12.456E-2" parteEntera = 0 mantisa =12456
+                parteEntera = (int) strol(informacion.constante, NULL, 10);
+                printf("Constante real: %s - Mantisa: %i - Parte entera: %i", mantisa, parteEntera);
+            case 'd':
+                printf("Constante hexa: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 16));
 
-}
-void procesarConstanteReal(char* id)
-{
-
+        }
+    }
 }
 
 %}
@@ -213,10 +256,10 @@ SECUENCIA_DE_ESCAPE "\\'"|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
 
 
 %%
-[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {procesarConstanteDecimal(yytext); printf("Encontre una constante entera decimal: %s \n", yytext);}
-0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {procesarConstanteOctal(yytext);printf("Encontre una constante entera octal: %s \n", yytext);}
-0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {procesarConstanteHexa(yytext); printf("Encontre una constante entera hexadecimal: %s\n", yytext);}
-{DIGITO_DECIMAL}+(\.{DIGITO_DECIMAL}*)?{PARTE_EXPONENTE}?{SUFIJO_REAL}? {procesarConstanteReal(yytext);printf("Encontre una constante real: %s \n", yytext);}
+[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {procesarConstante(yytext, 'd'); printf("Encontre una constante entera decimal: %s \n", yytext);}
+0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {procesarConstante(yytext, 'o');printf("Encontre una constante entera octal: %s \n", yytext);}
+0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {procesarConstante(yytext), 'h'); printf("Encontre una constante entera hexadecimal: %s\n", yytext);}
+{DIGITO_DECIMAL}+(\.{DIGITO_DECIMAL}*)?{PARTE_EXPONENTE}?{SUFIJO_REAL}? {procesarConstante(yytext. 'r');printf("Encontre una constante real: %s \n", yytext);}
 {PALABRA_RESERVADA} {procesarPalabraReservada(yytext); printf("---->Encontre una palabra reservada: %s \n", yytext);}
 \'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {printf("Encontre una constante caracter: %s \n", yytext);}
 [a-zA-Z_][a-zA-Z0-9_]* {procesarIdentificador(yytext); printf("Se encontro un identificador: %s\n", yytext);}
@@ -232,6 +275,7 @@ int main() {
     yylex();
 	
     imprimirListaPalabrasReservadas();
+    imprimirListaDeConstantes();
     return 0;
 }
 
