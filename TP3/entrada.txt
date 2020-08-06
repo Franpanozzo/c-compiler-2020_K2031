@@ -1,11 +1,18 @@
 int main(){
-    float x = 2.3 + 5E-6; 
+    int u = 010;
+    float x = 2.3; 
     char t[50];
+    10;
+    6.78432;
     printf("Decime el valor de la variable: ");
+    's';
     gets(t);
     printf("El valor es: %s",t);
     char* p;
+    ['f', 'd', 'h'];
     return 0;
     /* que onda papurri  */
-   
+    // hola
+    #
+    @@@@
 }

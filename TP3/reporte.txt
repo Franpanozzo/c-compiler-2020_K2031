@@ -1,0 +1,63 @@
+
+>>>LISTADO DE IDENTIFICADORES<<<
+
+main - cantidad: 1
+gets - cantidad: 1
+p - cantidad: 1
+printf - cantidad: 2
+t - cantidad: 3
+u - cantidad: 1
+x - cantidad: 1
+
+>>>LISTADO DE LITERALES CADENA<<<
+
+"El valor es: %s" - Longitud: 17 
+"Decime el valor de la variable: " - Longitud: 34 
+
+>>>LISTADO DE PALABRAS RESERVADAS<<<
+
+Palabra reservada: int 
+Palabra reservada: int 
+Palabra reservada: float 
+Palabra reservada: char 
+Palabra reservada: char 
+Palabra reservada: return 
+
+>>>LISTADO DE CONSTANTES<<<
+
+Constante octal: 010 - Valor decimal: 8
+Constante real: 2.3 - Mantisa: 0.300000 - Parte entera: 2
+Constante decimal: 50
+Constante decimal: 10
+Constante real: 6.78432 - Mantisa: 0.784320 - Parte entera: 6
+Constante caracter: 's' - orden de aparicion: 1
+Constante caracter: 'f' - orden de aparicion: 2
+Constante caracter: 'd' - orden de aparicion: 3
+Constante caracter: 'h' - orden de aparicion: 4
+Constante octal: 0 - Valor decimal: 0
+
+>>>LISTADO DE CARACTERES DE PUNTUACION<<<
+
+( - cantidad: 4
+) - cantidad: 4
+* - cantidad: 1
+, - cantidad: 3
+; - cantidad: 12
+= - cantidad: 2
+[ - cantidad: 2
+] - cantidad: 2
+{ - cantidad: 1
+} - cantidad: 1
+
+>>>LISTADO DE COMENTARIOS<<<
+
+/* que onda papurri  */ - Comentario de multiples lineas 
+// hola - Comentario de una linea 
+
+>>>LISTADO DE CARACTERES NO RECONOCIDOS<<<
+
+# - Esta en la linea: 15
+@ - Esta en la linea: 16
+@ - Esta en la linea: 16
+@ - Esta en la linea: 16
+@ - Esta en la linea: 16

@@ -4,13 +4,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-//---IDENTIFICADORES
+//---IDENTIFICADORES Y CARACTERES DE PUNTUACION
 typedef struct tInfo
 {
     char* identificador;
     int contador;
 }tInfo;
+
+typedef enum{
+    OCTAL,
+    HEXADECIMAL,
+    REAL,
+    DECIMAL,
+    CARACTER,
+    UNICA,
+    MULTIPLE
+} ETIPO;
+
 
 typedef struct nodo
 {
@@ -39,29 +51,37 @@ typedef struct nodoPalRes
     struct nodoPalRes* siguiente;
 }nodoPalRes;
 
-// Constantes
-typedef struct tInfoConstantes
+// CONSTANTES Y COMENTARIOS
+typedef struct tInfoConstanteYComentario
 {
-    char tipo;
-    char* constante;
-}tInfoConstantes;
+    ETIPO tipo;
+    char* contenido;
+}tInfoConstanteYComentario;
 
-typedef struct nodoConstantes
+typedef struct nodoConstanteYComentario
 {
-    tInfoConstantes info;
-    struct nodoConstantes* siguiente;
-}nodoConstantes;
+    tInfoConstanteYComentario info;
+    struct nodoConstanteYComentario* siguiente;
+}nodoConstanteYComentario;
 
-typedef nodoConstantes* tListaConstantes; 
+typedef nodoConstanteYComentario* tListaConstantesYComentario;
 typedef nodo* tLista;
 typedef nodoCadena* tPilaCadena;
 typedef nodoPalRes* tColaPalRes;
 
-tColaPalRes listaPalRes = NULL;
-tColaPalRes listaPalResUltimo = NULL;
+tColaPalRes colaPalRes = NULL;
+tColaPalRes colaPalResUltimo = NULL;
+tLista colaNoReconocidas = NULL;
+tLista colaNoReconocidasUltimo = NULL;
 tPilaCadena pilaCadenas = NULL;
 tLista listaDeIdentificadores = NULL;
-tListaConstantes listaDeConstantes = NULL;
+tListaConstantesYComentario listaDeConstantes = NULL;
+tListaConstantesYComentario listaDeConstantesUltimo = NULL;
+tListaConstantesYComentario listaDeComentarios = NULL;
+tListaConstantesYComentario listaDeComentariosUltimo = NULL;
+tLista listaCarDePun = NULL;
+int contadorCaracteres = 0;
+int contadorLinea = 0;
 
 void procesarLiteralCadena (char* id, int longitud)
 {
@@ -71,23 +91,15 @@ void procesarLiteralCadena (char* id, int longitud)
     p -> siguiente = pilaCadenas;
     pilaCadenas = p;
     tPilaCadena nodoActivo = pilaCadenas;
-
-    while(nodoActivo){
-        printf("Se encontra la cadena: %s , de longitud %i\n",p->info.cadena,p->info.contador);
-        nodoActivo = nodoActivo -> siguiente;
-    }
 }
-void insertarOrdenado(char* id)
+void insertarOrdenado(char* id, tLista* lista)
 {
-    tLista nodoActivo = listaDeIdentificadores;
+    tLista nodoActivo = *lista;
     tLista pNuevoNodo = (tLista) malloc(sizeof(nodo));
-    tInfo informacion = {};
     pNuevoNodo->info.identificador = strdup(id);
     pNuevoNodo->info.contador = 1;
 
-
-
-    if(listaDeIdentificadores)
+    if(*lista)
     {
         while(nodoActivo->siguiente && strcmp(nodoActivo->siguiente->info.identificador, id) < 0)
         {
@@ -107,16 +119,16 @@ void insertarOrdenado(char* id)
     else
     {
         pNuevoNodo->siguiente = NULL;
-        listaDeIdentificadores = pNuevoNodo;
+        *lista = pNuevoNodo;
     }
 }
-void buscarYContar (char* id)
-{
-    tLista nodoActivo = listaDeIdentificadores;
 
-    if(listaDeIdentificadores)
+void buscarYContar (char* id, tLista* lista)
+{
+    tLista nodoActivo = *lista;
+    if(*lista)
     {
-        while (nodoActivo -> siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
+        while (nodoActivo->siguiente && strcmp(nodoActivo->info.identificador, id) != 0)
         {
             nodoActivo = nodoActivo->siguiente;
         }
@@ -127,21 +139,13 @@ void buscarYContar (char* id)
         }
         else
         {
-            insertarOrdenado(id);
+            insertarOrdenado(id,lista);
         }
     }
     else
     {
-        insertarOrdenado(id);
+        insertarOrdenado(id,lista);
     }
-}
-void procesarIdentificador(char* id)
-{
-    printf("Encontre un identificador: %s\n", id);
-
-    buscarYContar(id);
-
-    tLista nodoActivo = listaDeIdentificadores;
 }
 
 void procesarPalabraReservada(char* pr)
@@ -149,34 +153,38 @@ void procesarPalabraReservada(char* pr)
     tColaPalRes p = (tColaPalRes) malloc(sizeof(nodoPalRes));
      p->palRes = strdup(pr);
 
-    if(listaPalRes)
+    if(colaPalRes)
     {
-        listaPalResUltimo->siguiente = p;
-        listaPalResUltimo = p;
+        colaPalResUltimo->siguiente = p;
+        colaPalResUltimo = p;
         p->siguiente = NULL;
     }
     else
     {
-        listaPalResUltimo = p;
+        colaPalResUltimo = p;
         p->siguiente = NULL;
-        listaPalRes = p;
+        colaPalRes = p;
     }
 }
 
 char* desencolarNodoPalabraReservada()
 {
-    tColaPalRes p = listaPalRes;
-    listaPalRes = listaPalRes->siguiente;
+    tColaPalRes p = colaPalRes;
+    colaPalRes = colaPalRes->siguiente;
     char* id = strdup(p->palRes);
+    if(!(colaPalRes))
+    {
+        colaPalResUltimo = NULL;
+    }
     free(p);
     return id;
 }
 
-tInfoConstantes desencolarNodoConstante()
+tInfoConstanteYComentario desencolarNodoConstantesYComentarios(tListaConstantesYComentario* lista)
 {
-    tListaConstantes p = listaDeConstantes;
-    listaDeConstantes = listaDeConstantes->siguiente;
-    tInfoConstantes informacion = p->info;
+    tListaConstantesYComentario p = *lista;
+    *lista = (*lista)->siguiente;
+    tInfoConstanteYComentario informacion = p->info;
     free(p);
     return informacion;
 }
@@ -186,57 +194,196 @@ void imprimirListaPalabrasReservadas()
     char* informacion;
 
     printf("\n>>>LISTADO DE PALABRAS RESERVADAS<<<\n\n");
-    while(listaPalRes)
+    while(colaPalRes)
     {
         informacion = desencolarNodoPalabraReservada();
         printf("Palabra reservada: %s \n",informacion);
     }
+    
 }
 
-void procesarConstante(char* id, char tipo)
+tInfo desencolarNoReconocidas()
 {
-    tListaConstantes p = (tListaConstantes) malloc(sizeof(nodoConstantes));
-    p->tipo = tipo;
-    p->constante = strdup(id);
-
-    if(listaDeConstantes)
+    tLista p = colaNoReconocidas;
+    colaNoReconocidas = colaNoReconocidas->siguiente;
+    tInfo informacion = p->info;
+    if(!(colaNoReconocidas))
     {
-        listaDeConstantesUltimo->siguiente = p;
-        listaDeConstantesUltimo = p;
+        colaNoReconocidasUltimo = NULL;
+    }
+    free(p);
+    return informacion;
+}
+
+void imprimirListaNoReconocidas()
+{
+    tInfo informacion;
+
+    printf("\n>>>LISTADO DE CARACTERES NO RECONOCIDOS<<<\n\n");
+    while(colaNoReconocidas)
+    {
+        informacion = desencolarNoReconocidas();
+        printf("%s - Esta en la linea: %i\n",informacion.identificador,informacion.contador);
+    }
+    
+}
+
+void procesarConstanteYComentario(char* id, ETIPO cTipo, tListaConstantesYComentario* listaInicio,tListaConstantesYComentario* listaFin )
+{
+    tListaConstantesYComentario p = (tListaConstantesYComentario) malloc(sizeof(nodoConstanteYComentario));
+    p->info.tipo = cTipo;
+    p->info.contenido = strdup(id);
+
+    if(*listaInicio)
+    {
+        (*listaFin)->siguiente = p;
+        *listaFin = p;
         p->siguiente = NULL;
     }
     else
     {
-        listaDeConstantesUltimo = p;
+        *listaFin = p;
         p->siguiente = NULL;
-        listaDeConstantes = p;
+        *listaInicio = p;
     }
 }
 
 void imprimirListaDeConstantes()
 {
-    char* informacion;
-    int parteEntera;
+    tInfoConstanteYComentario informacion;
+    double parteEntera = 0;
+    double mantisa = 0;
+    double numeroReal = 0;
+
     printf("\n>>>LISTADO DE CONSTANTES<<<\n\n");
     while(listaDeConstantes)
-    {
-        informacion = desencolarNodoConstante();
+    { 
+        informacion = desencolarNodoConstantesYComentarios(&listaDeConstantes);
         switch(informacion.tipo)
         {
-            case 'o':
-                printf("Constante octal: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 8));
-            case 'h':
-                printf("Constante hexa: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 16));
-            case 'r': 
-            "-12.456E-2" parteEntera = 0 mantisa =12456
-                parteEntera = (int) strol(informacion.constante, NULL, 10);
-                printf("Constante real: %s - Mantisa: %i - Parte entera: %i", mantisa, parteEntera);
-            case 'd':
-                printf("Constante hexa: %s - Valor decimal: %s", informacion.constante, strol(informacion.constante, NULL, 16));
+            case OCTAL:
+                printf("Constante octal: %s - Valor decimal: %li\n", informacion.contenido, strtol(informacion.contenido, NULL, 8));
+                break;
+            case HEXADECIMAL:
+                printf("Constante hexa: %s - Valor decimal: %li\n", informacion.contenido, strtol(informacion.contenido, NULL, 16));
+                break;
+            case REAL: 
+                numeroReal = atof(informacion.contenido);
+                //int parteEntera = (int) numeroReal;
+                mantisa = modf(numeroReal, &parteEntera);
+                
+                // "-12.456E-2L" parteEntera = 0 mantisa =12456
+
+                printf("Constante real: %s - Mantisa: %f - Parte entera: %i\n",informacion.contenido , mantisa, (int) parteEntera);
+                break;
+            case DECIMAL:
+                printf("Constante decimal: %s\n", informacion.contenido);
+                break;
+            case CARACTER:
+                printf("Constante caracter: %s - orden de aparicion: %i\n" , informacion.contenido, ++contadorCaracteres);
+                break;
+                
 
         }
     }
 }
+
+tInfo obtenerDeLista(tLista* lista)
+{
+    tLista p = *lista;
+    tInfo informacion= p->info;
+    *lista = p->siguiente;
+    free(p);
+    return informacion;
+}
+
+void imprimirLista(tLista* lista, char* titulo)
+{
+    printf("\n%s\n\n", titulo);
+    tInfo id;
+    if(titulo == ">>>LISTADO DE CARACTERES NO RECONOCIDOS<<<")
+    {
+        
+    }
+    else
+    {
+    while(*lista)
+    {
+        id = obtenerDeLista(lista);
+        printf("%s - cantidad: %i\n", id.identificador, id.contador);
+    }
+    }
+    
+}
+
+tInfoCadena popCadena()
+{
+    tPilaCadena p = pilaCadenas;
+    pilaCadenas = pilaCadenas->siguiente;
+    tInfoCadena informacion = p->info;
+    free(p);
+    return informacion;
+}
+
+void imprimirCadenas()
+{
+    tInfoCadena cad;
+    printf("\n>>>LISTADO DE LITERALES CADENA<<<\n\n");
+    
+    while(pilaCadenas)
+    {
+        cad = popCadena();
+        printf("%s - Longitud: %i \n", cad.cadena, cad.contador);
+    }
+}
+
+void imprimirComentarios()
+{
+    tInfoConstanteYComentario informacion;
+    printf("\n>>>LISTADO DE COMENTARIOS<<<\n\n");
+    while(listaDeComentarios)
+    { 
+        informacion = desencolarNodoConstantesYComentarios(&listaDeComentarios);
+        switch(informacion.tipo)
+        {
+            case UNICA:
+                printf("%s - Comentario de una linea \n",informacion.contenido);
+                break;
+            case MULTIPLE:
+                printf("%s - Comentario de multiples lineas \n",informacion.contenido);
+                break;
+        }
+    }
+}
+
+void procesarNoReconocido(char* caracter)
+{
+    if(caracter[0] == '\n')
+    {
+        contadorLinea++;
+        return;
+    }
+
+    tLista p = (tLista) malloc(sizeof(nodo));
+    p->info.identificador = strdup(caracter);
+    p->info.contador = contadorLinea;
+
+    if(colaNoReconocidas)
+    {
+        colaNoReconocidasUltimo->siguiente = p;
+        p->siguiente = NULL;
+        colaNoReconocidasUltimo = p;
+    }
+    else
+    {
+        p->siguiente = NULL;
+        colaNoReconocidas = p;
+        colaNoReconocidasUltimo = p;
+    }
+}
+
+
+
 
 %}
 
@@ -256,26 +403,37 @@ SECUENCIA_DE_ESCAPE "\\'"|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
 
 
 %%
-[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {procesarConstante(yytext, 'd'); printf("Encontre una constante entera decimal: %s \n", yytext);}
-0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {procesarConstante(yytext, 'o');printf("Encontre una constante entera octal: %s \n", yytext);}
-0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {procesarConstante(yytext), 'h'); printf("Encontre una constante entera hexadecimal: %s\n", yytext);}
-{DIGITO_DECIMAL}+(\.{DIGITO_DECIMAL}*)?{PARTE_EXPONENTE}?{SUFIJO_REAL}? {procesarConstante(yytext. 'r');printf("Encontre una constante real: %s \n", yytext);}
-{PALABRA_RESERVADA} {procesarPalabraReservada(yytext); printf("---->Encontre una palabra reservada: %s \n", yytext);}
-\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {printf("Encontre una constante caracter: %s \n", yytext);}
-[a-zA-Z_][a-zA-Z0-9_]* {procesarIdentificador(yytext); printf("Se encontro un identificador: %s\n", yytext);}
-"++"|[*+&!,;/%<:=]|"<="|"=="|"!="|"&&"|"||"|"?"|"+="|"{"|"}"|"["|"]"|"("|")" {printf("Encontre un caracter de puntuacion: %s\n", yytext);}
+
+[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {procesarConstanteYComentario(yytext, DECIMAL, &listaDeConstantes, &listaDeConstantesUltimo);}
+0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {procesarConstanteYComentario(yytext, OCTAL, &listaDeConstantes, &listaDeConstantesUltimo);}
+0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {procesarConstanteYComentario(yytext, HEXADECIMAL, &listaDeConstantes, &listaDeConstantesUltimo);}
+{SIGNO}?{DIGITO_DECIMAL}+(\.{DIGITO_DECIMAL}*)?{PARTE_EXPONENTE}?{SUFIJO_REAL}? {procesarConstanteYComentario(yytext, REAL, &listaDeConstantes, &listaDeConstantesUltimo);}
+{PALABRA_RESERVADA} {procesarPalabraReservada(yytext);}
+\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {procesarConstanteYComentario(yytext, CARACTER, &listaDeConstantes, &listaDeConstantesUltimo);}
+[a-zA-Z_][a-zA-Z0-9_]* {buscarYContar(yytext, &listaDeIdentificadores);}
+"//"[^\n]*$ {procesarConstanteYComentario(yytext, UNICA, &listaDeComentarios, &listaDeComentariosUltimo);}
+"++"|[*+&!,;/%<:=-]|"<="|"=="|"!="|"&&"|"||"|"?"|"+="|"{"|"}"|"["|"]"|"("|")"|"--" {buscarYContar(yytext,&listaCarDePun);}
 \"([^\"]*)\" {procesarLiteralCadena(yytext,yyleng);}
-"/*"([^*]|\*+[^/])*\*+\/ {printf("Se encontro un comentario de multiple linea.\n");}
+"/*"([^*]|\*+[^/])*\*+\/ {procesarConstanteYComentario(yytext, MULTIPLE, &listaDeComentarios, &listaDeComentariosUltimo);}
+[^ ] {procesarNoReconocido(yytext);}
 
 %%
 
-int main() {
+int main() 
+{
+    freopen("reporte.txt", "w", stdout);
     yyin = fopen("entrada.txt", "r");
     yyout = fopen("salida.txt", "w");
     yylex();
-	
+
+    imprimirLista(&listaDeIdentificadores,">>>LISTADO DE IDENTIFICADORES<<<");
+    imprimirCadenas();
     imprimirListaPalabrasReservadas();
     imprimirListaDeConstantes();
+    imprimirLista(&listaCarDePun,">>>LISTADO DE CARACTERES DE PUNTUACION<<<");
+    imprimirComentarios();
+    imprimirListaNoReconocidas();
+
     return 0;
 }
 
