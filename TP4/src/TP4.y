@@ -35,37 +35,128 @@ char caracter;
 %token <cadena> TIPO_DATO
 %token <entero> ERROR
 %token <real> REAL
+%token TOKEN_VOID
 
-%type <cadena> identificadorA
 %type <entero> expresion
+
+%left OP_INCREMENTO OP_DECREMENTO
+%left '+' '-'
+%left '*' '/'
+%left '^'
+%left '<' '>' MENORIGUAL MAYORIGUAL
+%left IGUALIGUAL NOIGUAL
+%left YLOGICO
+%left OLOGICO
+%left '=' MASIGUAL MENOSIGUAL PORIGUAL DIVIDIDOIGUAL
+%left ','
+
+%start sentencia
 
 %% /* A continuacion las reglas gramaticales y las acciones */
 
+// Cambiar el axioma por una lista de sentencias
 input:    /* vacio */
-        | input line
+        | input sentencia
 ;
 
-line:     '\n'
-        | sentenciaDeclaracion '\n'
+numero: NUM
+		| REAL
+;
+sentencia:  sentenciaDeclaracion
+			| sentenciaCompuesta
+			| sentenciaDeAsignacion
+			| sentenciaExpresion
+			| sentencia
+			| /* vacio */  ';'
 ;
 
-sentenciaDeclaracion: 	TIPO_DATO {tipo=$<cadena>1;} listaIdentificadores ';' {if(flag_error==0){printf("Se han declarado %d variables de tipo %s \n",contador,$<cadena>1);contador=0;};flag_error=0;}
-						| ERROR caracterDeCorte {printf("Falta tipo de dato \n");}
-
-listaIdentificadores: 	identificadorA
-						| identificadorA ',' listaIdentificadores
+sentenciaDeclaracion: TIPO_DATO declaraId parteFinalDeclaracion 
 ;
 
-identificadorA:		  	ID {printf("Se declara el identificador %s de tipo %s \n",$<cadena>1,tipo);contador++;}
-						| ID '=' expresion {if(flag_error==0){printf("Se declara el identificador %s de tipo %s y se le asigna el valor %d \n",$<cadena>1,tipo,$<entero>3);};contador++;}
-						| ERROR {if(flag_error==0){printf("Falta identificador \n");flag_error=1;};}
+parteFinalDeclaracion: ';' {}
+				| ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
+				| '(' listaDeParametros ')' declaracionODefFuncion {}
 ;
 
-expresion:				NUM {$<entero>$=$<entero>1;}
-						| ERROR {flag_error=1;printf("Valor no reconocido para asignar \n");}
+declaracionODefFuncion:  ';' {printf("\nSe declara una funcion\n");}
+						| sentenciaCompuesta  {printf("\nSe define una funcion\n");}
 ;
 
-caracterDeCorte:	';' | '\n'
+listaIdentificadores: declaraId ',' listaIdentificadores
+                    | declaraId
+;
+
+declaraId: 	ID {}
+			| ID '=' expresion  {}
+;
+
+listaDeParametros: /* vacio */
+					|TIPO_DATO ID ',' listaDeParametros
+					| TIPO_DATO ID
+;
+
+sentenciaCompuesta: '{'listaDeSentencias'}' {}
+;
+
+listaDeSentencias: sentencia listaDeSentencias {}
+					| sentencia {}
+;
+
+sentenciaDeAsignacion: ID opAsignacion expresion ';'
+;
+
+opAsignacion:  '='
+			   | MENOSIGUAL
+			   | MASIGUAL
+			   | PORIGUAL
+			   | DIVIDIDOIGUAL
+;
+sentenciaExpresion: expresion';'	{}
+;	
+
+invocacionFuncion: ID '(' listaDeExpresiones ')'
+					| ID '('')'
+;
+
+listaDeExpresiones: expresion ',' listaDeExpresiones
+					| expresion
+;
+
+
+expresion:	 numero
+			| ID
+			| ID  '='  expresion
+			| ID '(' expresion  ')'
+			| expresion '+' expresion
+			| expresion '-' expresion
+			| expresion '*' expresion
+			| expresion '/' expresion
+			| expresionUnaria
+			| expresion '^' expresion
+			| '(' expresion ')'
+			| opPreDecremento
+			| opPreIncremento
+			| opPostDecremento
+			| opPostIncremento 
+			| expresion YLOGICO expresion
+			| expresion OLOGICO expresion
+			| expresion '<' expresion
+			| expresion '>' expresion
+			| expresion MENORIGUAL expresion
+			| expresion MAYORIGUAL expresion
+			| invocacionFuncion
+;
+
+opPostDecremento: expresion OP_DECREMENTO
+;
+opPreDecremento: OP_DECREMENTO ID
+;
+opPostIncremento: ID OP_INCREMENTO
+;
+opPreIncremento: OP_INCREMENTO ID
+;
+expresionUnaria: '-' expresion
+;
 
 %%
 
@@ -74,5 +165,6 @@ int main ()
 #ifdef BISON_DEBUG
         yydebug = 1;
 #endif
+  printf("Ingrese la declaracion: ");
   yyparse ();
 }

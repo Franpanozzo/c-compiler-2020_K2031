@@ -1,0 +1,18 @@
+axioma -> TIPO_DATO ID parteFinalA
+
+parteFinalA: ';'
+            | ',' listaIdentificadores
+            | = expresion parteFinalB
+            | parteFinalDeclaracionFuncion
+
+parteFinalB : ','listaIdentificadores
+            | ';'
+
+parteFinalDeclaracionFuncion : (listaIdentificadores) finalX
+
+
+finalX : ';'  | senteciaCompuesta
+
+listaIdentificadores: TIPO_DATO ID ',' listaDeParametros
+                    | TIPO_DATO ID
+
