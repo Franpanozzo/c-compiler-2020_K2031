@@ -1,16 +1,14 @@
 %option noyywrap
 
+yyin = fopen("entrada.txt", "r");
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "TP4.tab.h"
-
-//yyin = fopen("entrada.txt", "r");
 %}
-
-
 
 DIGITO_DECIMAL [0-9] 
 DIGITO_OCTAL [0-7] 
@@ -20,8 +18,6 @@ PARTE_EXPONENTE [Ee]{SIGNO}?{DIGITO_DECIMAL}+
 SUFIJO_REAL [lLfF]
 SUFIJO_ENTERO [uULl]
 PALABRA_RESERVADA_TIPO "int"|"long"|"double"|"float"|"char"|"short"|"char*"
-PALABRA_RESERVADA_BLOQUE  "while" | "for" | "if" | "do"
-PALABRA_RESERVADA "auto"|"case"|"default"|"do"|"else"|"enum"|"extern"|"for"|"goto"|"if"|"register"|"return"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"volatile"|"while"
 CARACTER_C [^\\]
 SECUENCIA_DE_ESCAPE "\\'"|"\\?"|"\\\\"|"\\a"|"\\b"|"\\f"|"\\n"|"\\r"|"\\t"|"\\v"
 CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}? 
@@ -31,10 +27,16 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {yylval.entero = strtol(yytext, NULL, 0); return NUM;} 
 0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {yylval.entero = strtol(yytext, NULL, 0); return NUM;}
 {CONSTANTE_REAL} {yylval.real = atof(yytext); return REAL;}
-{PALABRA_RESERVADA} {yylval.cadena = strdup(yytext); return PALRESERVADA;}
 {PALABRA_RESERVADA_TIPO} {yylval.cadena = strdup(yytext); return TIPO_DATO;}
 \'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {yylval.caracter = yytext[1];return CCHAR;}
-[a-zA-Z_][a-zA-Z0-9_]* {yylval.cadena = strdup(yytext); return ID;}
+"if" {return IF;}
+"else" {return ELSE;}
+"for" {return FOR;}
+"while" {return WHILE;}
+"case" {return CASE;}
+"do" {return DO;}
+"default" {return DEFAULT;}
+"void" {return TOKEN_VOID;}
 "//"[^\n]*$ {;}
 "++" {return OP_INCREMENTO;}
 "--" {return OP_DECREMENTO;}
@@ -48,6 +50,7 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "-=" {return MENOSIGUAL;}
 "*=" {return PORIGUAL;}
 "/=" {return DIVIDIDOIGUAL;}
+[a-zA-Z_][a-zA-Z0-9_]* {yylval.cadena = strdup(yytext); return ID;}
 [+-/*=:()^{};&] {return yytext[0];}
 \"([^\"]*)\" {yylval.cadena = strdup(yytext);return LITERALCADENA;}
 "/*"([^*]|\*+[^/])*\*+\/ {}

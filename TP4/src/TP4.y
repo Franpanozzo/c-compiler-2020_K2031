@@ -25,19 +25,30 @@ int entero;
 int tipo;
 double real;
 char caracter;
+struct{int tipo, char* nombre} tipoYNombre;
 }
 
 %token <caracter> CCHAR
 %token <entero> NUM
 %token <cadena> LITERALCADENA
 %token <cadena> ID
-%token <cadena> PALRESERVADA
 %token <cadena> TIPO_DATO
 %token <entero> ERROR
 %token <real> REAL
 %token TOKEN_VOID
+%token FOR
+%token IF
+%token WHILE
+%token DO
+%token CASE
+%token DEFAULT
+%token SWITCH
+%token ELSE
 
 %type <entero> expresion
+%type <entero> numero
+%type <entero> constante
+%type <tipoYNombre> declaraId
 
 %left OP_INCREMENTO OP_DECREMENTO
 %left '+' '-'
@@ -47,7 +58,7 @@ char caracter;
 %left IGUALIGUAL NOIGUAL
 %left YLOGICO
 %left OLOGICO
-%left '=' MASIGUAL MENOSIGUAL PORIGUAL DIVIDIDOIGUAL
+%right '=' MASIGUAL MENOSIGUAL PORIGUAL DIVIDIDOIGUAL
 %left ','
 
 %start sentencia
@@ -64,18 +75,38 @@ numero: NUM
 ;
 sentencia:  sentenciaDeclaracion
 			| sentenciaCompuesta
-			| sentenciaDeAsignacion
 			| sentenciaExpresion
-			| sentencia
+			| sentenciaIteracion
+			| sentenciaEtiquetada
+			| sentenciaSeleccion
 			| /* vacio */  ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO declaraId parteFinalDeclaracion 
+sentenciaDeclaracion: TIPO_DATO parteFinalDeclaracion 
 ;
 
-parteFinalDeclaracion: ';' {}
-				| ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
-				| '(' listaDeParametros ')' declaracionODefFuncion {}
+sentenciaSeleccion: IF '(' expresion ')' sentencia 
+					| IF '(' expresion ')' sentencia ELSE sentencia 
+					| SWITCH '(' expresion ')' sentencia
+;
+
+sentenciaEtiquetada: CASE constante ':' sentencia
+					| DEFAULT ':' sentencia
+;
+
+constante: numero | CCHAR
+;
+
+sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+					| WHILE '(' expresion ')' sentencia
+					| DO sentencia WHILE '(' expresion ')'';'
+;
+
+expresionOpcional: expresion | /*vacio*/ ;
+
+parteFinalDeclaracion: declaraId';' {}
+				| declaraId ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
+				| ID '(' listaDeParametros ')' declaracionODefFuncion {}
 ;
 
 declaracionODefFuncion:  ';' {printf("\nSe declara una funcion\n");}
@@ -84,10 +115,6 @@ declaracionODefFuncion:  ';' {printf("\nSe declara una funcion\n");}
 
 listaIdentificadores: declaraId ',' listaIdentificadores
                     | declaraId
-;
-
-declaraId: 	ID {}
-			| ID '=' expresion  {}
 ;
 
 listaDeParametros: /* vacio */
@@ -102,31 +129,36 @@ listaDeSentencias: sentencia listaDeSentencias {}
 					| sentencia {}
 ;
 
-sentenciaDeAsignacion: ID opAsignacion expresion ';'
-;
-
-opAsignacion:  '='
-			   | MENOSIGUAL
+opAsignacion:	MENOSIGUAL
 			   | MASIGUAL
 			   | PORIGUAL
 			   | DIVIDIDOIGUAL
 ;
-sentenciaExpresion: expresion';'	{}
-;	
+
+sentenciaExpresion: listaDeExpresiones';'	{}
+;
 
 invocacionFuncion: ID '(' listaDeExpresiones ')'
-					| ID '('')'
+					| '('')'
 ;
 
-listaDeExpresiones: expresion ',' listaDeExpresiones
-					| expresion
+expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
 ;
 
+opAsignacionGeneral: '='
+    				| opAsignacion
+;
+
+declaraId: 	ID {printf("\n-->Declaracion sin asignacion: $s.\n", $<cadena>1);}
+			| ID '=' expresion {printf("\n-->Declaracion con asignacion: %s.\n", $<cadena>1);}
+;
+
+listaDeExpresiones: expresion
+			 	    | expresion ',' listaDeExpresiones
 
 expresion:	 numero
 			| ID
-			| ID  '='  expresion
-			| ID '(' expresion  ')'
+			| expresionDeAsignacion
 			| expresion '+' expresion
 			| expresion '-' expresion
 			| expresion '*' expresion

@@ -43,23 +43,30 @@
      NUM = 259,
      LITERALCADENA = 260,
      ID = 261,
-     PALRESERVADA = 262,
-     TIPO_DATO = 263,
-     ERROR = 264,
-     REAL = 265,
-     TOKEN_VOID = 266,
-     OP_DECREMENTO = 267,
-     OP_INCREMENTO = 268,
-     MAYORIGUAL = 269,
-     MENORIGUAL = 270,
-     NOIGUAL = 271,
-     IGUALIGUAL = 272,
-     YLOGICO = 273,
-     OLOGICO = 274,
-     DIVIDIDOIGUAL = 275,
-     PORIGUAL = 276,
-     MENOSIGUAL = 277,
-     MASIGUAL = 278
+     TIPO_DATO = 262,
+     ERROR = 263,
+     REAL = 264,
+     TOKEN_VOID = 265,
+     FOR = 266,
+     IF = 267,
+     WHILE = 268,
+     DO = 269,
+     CASE = 270,
+     DEFAULT = 271,
+     SWITCH = 272,
+     ELSE = 273,
+     OP_DECREMENTO = 274,
+     OP_INCREMENTO = 275,
+     MAYORIGUAL = 276,
+     MENORIGUAL = 277,
+     NOIGUAL = 278,
+     IGUALIGUAL = 279,
+     YLOGICO = 280,
+     OLOGICO = 281,
+     DIVIDIDOIGUAL = 282,
+     PORIGUAL = 283,
+     MENOSIGUAL = 284,
+     MASIGUAL = 285
    };
 #endif
 
@@ -81,7 +88,7 @@ char caracter;
 
 
 /* Line 1676 of yacc.c  */
-#line 85 "TP4.tab.h"
+#line 92 "TP4.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
