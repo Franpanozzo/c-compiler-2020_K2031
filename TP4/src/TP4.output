@@ -1,0 +1,2620 @@
+Terminals unused in grammar
+
+   LITERALCADENA
+   ERROR
+   TOKEN_VOID
+   NOIGUAL
+   IGUALIGUAL
+
+
+Estado 33 conflictos: 13 desplazamiento(s)/reducción(ones)
+Estado 127 conflictos: 1 desplazamiento(s)/reducción(ones)
+
+
+Gramática
+
+    0 $accept: input $end
+
+    1 input: /* vacío */
+    2      | input sentencia
+
+    3 numero: NUM
+    4       | REAL
+
+    5 sentencia: sentenciaDeclaracion
+    6          | sentenciaCompuesta
+    7          | sentenciaExpresion
+    8          | sentenciaIteracion
+    9          | sentenciaEtiquetada
+   10          | sentenciaSeleccion
+   11          | sentenciaRetorno
+   12          | ';'
+
+   13 $@1: /* vacío */
+
+   14 sentenciaDeclaracion: TIPO_DATO $@1 parteFinalDeclaracion
+
+   15 sentenciaSeleccion: IF '(' expresion ')' sentencia
+   16                   | IF '(' expresion ')' sentencia ELSE sentencia
+   17                   | SWITCH '(' expresion ')' sentencia
+
+   18 sentenciaEtiquetada: CASE constante ':' sentencia
+   19                    | DEFAULT ':' sentencia
+
+   20 sentenciaRetorno: RETURN expresion ';'
+
+   21 constante: numero
+   22          | CCHAR
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+   24                   | WHILE '(' expresion ')' sentencia
+   25                   | DO sentencia WHILE '(' expresion ')' ';'
+
+   26 expresionOpcional: expresion
+   27                  | /* vacío */
+
+   28 parteFinalDeclaracion: declaraId ';'
+   29                      | declaraId ',' listaIdentificadores ';'
+   30                      | ID '(' listaDeParametros ')' declaracionODefFuncion
+
+   31 declaracionODefFuncion: ';'
+   32                       | sentenciaCompuesta
+
+   33 listaIdentificadores: declaraId ',' listaIdentificadores
+   34                     | declaraId
+
+   35 listaDeParametros: /* vacío */
+   36                  | TIPO_DATO ID ',' listaDeParametros
+   37                  | TIPO_DATO ID
+
+   38 sentenciaCompuesta: '{' listaDeSentencias '}'
+
+   39 listaDeSentencias: sentencia listaDeSentencias
+   40                  | sentencia
+
+   41 opAsignacion: MENOSIGUAL
+   42             | MASIGUAL
+   43             | PORIGUAL
+   44             | DIVIDIDOIGUAL
+
+   45 sentenciaExpresion: listaDeExpresiones ';'
+
+   46 invocacionFuncion: ID '(' listaDeExpresiones ')'
+   47                  | ID '(' ')'
+
+   48 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones
+
+   49 opAsignacionGeneral: '='
+   50                    | opAsignacion
+
+   51 declaraId: ID
+   52          | ID '=' expresion
+
+   53 listaDeExpresiones: expresion
+   54                   | expresion ',' listaDeExpresiones
+
+   55 expresion: numero
+   56          | ID
+   57          | expresionDeAsignacion
+   58          | expresion '+' expresion
+   59          | expresion '-' expresion
+   60          | expresion '*' expresion
+   61          | expresion '/' expresion
+   62          | expresionUnaria
+   63          | expresion '^' expresion
+   64          | '(' expresion ')'
+   65          | opPreDecremento
+   66          | opPreIncremento
+   67          | opPostDecremento
+   68          | opPostIncremento
+   69          | expresion YLOGICO expresion
+   70          | expresion OLOGICO expresion
+   71          | expresion '<' expresion
+   72          | expresion '>' expresion
+   73          | expresion MENORIGUAL expresion
+   74          | expresion MAYORIGUAL expresion
+   75          | invocacionFuncion
+
+   76 opPostDecremento: expresion OP_DECREMENTO
+
+   77 opPreDecremento: OP_DECREMENTO ID
+
+   78 opPostIncremento: ID OP_INCREMENTO
+
+   79 opPreIncremento: OP_INCREMENTO ID
+
+   80 expresionUnaria: '-' expresion
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+'(' (40) 15 16 17 23 24 25 30 46 47 64
+')' (41) 15 16 17 23 24 25 30 46 47 64
+'*' (42) 60
+'+' (43) 58
+',' (44) 29 33 36 54
+'-' (45) 59 80
+'/' (47) 61
+':' (58) 18 19
+';' (59) 12 20 23 25 28 29 31 45
+'<' (60) 71
+'=' (61) 49 52
+'>' (62) 72
+'^' (94) 63
+'{' (123) 38
+'}' (125) 38
+error (256)
+CCHAR (258) 22
+NUM (259) 3
+LITERALCADENA (260)
+ID (261) 30 36 37 46 47 48 51 52 56 77 78 79
+TIPO_DATO (262) 14 36 37
+ERROR (263)
+REAL (264) 4
+TOKEN_VOID (265)
+FOR (266) 23
+IF (267) 15 16
+WHILE (268) 24 25
+DO (269) 25
+CASE (270) 18
+DEFAULT (271) 19
+SWITCH (272) 17
+ELSE (273) 16
+RETURN (274) 20
+OP_DECREMENTO (275) 76 77
+OP_INCREMENTO (276) 78 79
+MAYORIGUAL (277) 74
+MENORIGUAL (278) 73
+NOIGUAL (279)
+IGUALIGUAL (280)
+YLOGICO (281) 69
+OLOGICO (282) 70
+DIVIDIDOIGUAL (283) 44
+PORIGUAL (284) 43
+MENOSIGUAL (285) 41
+MASIGUAL (286) 42
+
+
+No terminales con las reglas donde aparecen
+
+$accept (47)
+    en la izquierda: 0
+input (48)
+    en la izquierda: 1 2, en la derecha: 0 2
+numero (49)
+    en la izquierda: 3 4, en la derecha: 21 55
+sentencia (50)
+    en la izquierda: 5 6 7 8 9 10 11 12, en la derecha: 2 15 16 17
+    18 19 23 24 25 39 40
+sentenciaDeclaracion (51)
+    en la izquierda: 14, en la derecha: 5
+$@1 (52)
+    en la izquierda: 13, en la derecha: 14
+sentenciaSeleccion (53)
+    en la izquierda: 15 16 17, en la derecha: 10
+sentenciaEtiquetada (54)
+    en la izquierda: 18 19, en la derecha: 9
+sentenciaRetorno (55)
+    en la izquierda: 20, en la derecha: 11
+constante (56)
+    en la izquierda: 21 22, en la derecha: 18
+sentenciaIteracion (57)
+    en la izquierda: 23 24 25, en la derecha: 8
+expresionOpcional (58)
+    en la izquierda: 26 27, en la derecha: 23
+parteFinalDeclaracion (59)
+    en la izquierda: 28 29 30, en la derecha: 14
+declaracionODefFuncion (60)
+    en la izquierda: 31 32, en la derecha: 30
+listaIdentificadores (61)
+    en la izquierda: 33 34, en la derecha: 29 33
+listaDeParametros (62)
+    en la izquierda: 35 36 37, en la derecha: 30 36
+sentenciaCompuesta (63)
+    en la izquierda: 38, en la derecha: 6 32
+listaDeSentencias (64)
+    en la izquierda: 39 40, en la derecha: 38 39
+opAsignacion (65)
+    en la izquierda: 41 42 43 44, en la derecha: 50
+sentenciaExpresion (66)
+    en la izquierda: 45, en la derecha: 7
+invocacionFuncion (67)
+    en la izquierda: 46 47, en la derecha: 75
+expresionDeAsignacion (68)
+    en la izquierda: 48, en la derecha: 57
+opAsignacionGeneral (69)
+    en la izquierda: 49 50, en la derecha: 48
+declaraId (70)
+    en la izquierda: 51 52, en la derecha: 28 29 33 34
+listaDeExpresiones (71)
+    en la izquierda: 53 54, en la derecha: 45 46 48 54
+expresion (72)
+    en la izquierda: 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70
+    71 72 73 74 75, en la derecha: 15 16 17 20 24 25 26 52 53 54 58
+    59 60 61 63 64 69 70 71 72 73 74 76 80
+opPostDecremento (73)
+    en la izquierda: 76, en la derecha: 67
+opPreDecremento (74)
+    en la izquierda: 77, en la derecha: 65
+opPostIncremento (75)
+    en la izquierda: 78, en la derecha: 68
+opPreIncremento (76)
+    en la izquierda: 79, en la derecha: 66
+expresionUnaria (77)
+    en la izquierda: 80, en la derecha: 62
+
+
+estado 0
+
+    0 $accept: . input $end
+
+    $default  reduce usando la regla 1 (input)
+
+    input  ir al estado 1
+
+
+estado 1
+
+    0 $accept: input . $end
+    2 input: input . sentencia
+
+    $end           desplazar e ir al estado 2
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 22
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 2
+
+    0 $accept: input $end .
+
+    $default  aceptar
+
+
+estado 3
+
+    3 numero: NUM .
+
+    $default  reduce usando la regla 3 (numero)
+
+
+estado 4
+
+   46 invocacionFuncion: ID . '(' listaDeExpresiones ')'
+   47                  | ID . '(' ')'
+   48 expresionDeAsignacion: ID . opAsignacionGeneral listaDeExpresiones
+   56 expresion: ID .
+   78 opPostIncremento: ID . OP_INCREMENTO
+
+    OP_INCREMENTO  desplazar e ir al estado 39
+    '='            desplazar e ir al estado 40
+    DIVIDIDOIGUAL  desplazar e ir al estado 41
+    PORIGUAL       desplazar e ir al estado 42
+    MENOSIGUAL     desplazar e ir al estado 43
+    MASIGUAL       desplazar e ir al estado 44
+    '('            desplazar e ir al estado 45
+
+    $default  reduce usando la regla 56 (expresion)
+
+    opAsignacion         ir al estado 46
+    opAsignacionGeneral  ir al estado 47
+
+
+estado 5
+
+   14 sentenciaDeclaracion: TIPO_DATO . $@1 parteFinalDeclaracion
+
+    $default  reduce usando la regla 13 ($@1)
+
+    $@1  ir al estado 48
+
+
+estado 6
+
+    4 numero: REAL .
+
+    $default  reduce usando la regla 4 (numero)
+
+
+estado 7
+
+   23 sentenciaIteracion: FOR . '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+
+    '('  desplazar e ir al estado 49
+
+
+estado 8
+
+   15 sentenciaSeleccion: IF . '(' expresion ')' sentencia
+   16                   | IF . '(' expresion ')' sentencia ELSE sentencia
+
+    '('  desplazar e ir al estado 50
+
+
+estado 9
+
+   24 sentenciaIteracion: WHILE . '(' expresion ')' sentencia
+
+    '('  desplazar e ir al estado 51
+
+
+estado 10
+
+   25 sentenciaIteracion: DO . sentencia WHILE '(' expresion ')' ';'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 52
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 11
+
+   18 sentenciaEtiquetada: CASE . constante ':' sentencia
+
+    CCHAR  desplazar e ir al estado 53
+    NUM    desplazar e ir al estado 3
+    REAL   desplazar e ir al estado 6
+
+    numero     ir al estado 54
+    constante  ir al estado 55
+
+
+estado 12
+
+   19 sentenciaEtiquetada: DEFAULT . ':' sentencia
+
+    ':'  desplazar e ir al estado 56
+
+
+estado 13
+
+   17 sentenciaSeleccion: SWITCH . '(' expresion ')' sentencia
+
+    '('  desplazar e ir al estado 57
+
+
+estado 14
+
+   20 sentenciaRetorno: RETURN . expresion ';'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 58
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 15
+
+   77 opPreDecremento: OP_DECREMENTO . ID
+
+    ID  desplazar e ir al estado 59
+
+
+estado 16
+
+   79 opPreIncremento: OP_INCREMENTO . ID
+
+    ID  desplazar e ir al estado 60
+
+
+estado 17
+
+   80 expresionUnaria: '-' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 61
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 18
+
+   12 sentencia: ';' .
+
+    $default  reduce usando la regla 12 (sentencia)
+
+
+estado 19
+
+   64 expresion: '(' . expresion ')'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 62
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 20
+
+   38 sentenciaCompuesta: '{' . listaDeSentencias '}'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 63
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    listaDeSentencias      ir al estado 64
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 21
+
+   55 expresion: numero .
+
+    $default  reduce usando la regla 55 (expresion)
+
+
+estado 22
+
+    2 input: input sentencia .
+
+    $default  reduce usando la regla 2 (input)
+
+
+estado 23
+
+    5 sentencia: sentenciaDeclaracion .
+
+    $default  reduce usando la regla 5 (sentencia)
+
+
+estado 24
+
+   10 sentencia: sentenciaSeleccion .
+
+    $default  reduce usando la regla 10 (sentencia)
+
+
+estado 25
+
+    9 sentencia: sentenciaEtiquetada .
+
+    $default  reduce usando la regla 9 (sentencia)
+
+
+estado 26
+
+   11 sentencia: sentenciaRetorno .
+
+    $default  reduce usando la regla 11 (sentencia)
+
+
+estado 27
+
+    8 sentencia: sentenciaIteracion .
+
+    $default  reduce usando la regla 8 (sentencia)
+
+
+estado 28
+
+    6 sentencia: sentenciaCompuesta .
+
+    $default  reduce usando la regla 6 (sentencia)
+
+
+estado 29
+
+    7 sentencia: sentenciaExpresion .
+
+    $default  reduce usando la regla 7 (sentencia)
+
+
+estado 30
+
+   75 expresion: invocacionFuncion .
+
+    $default  reduce usando la regla 75 (expresion)
+
+
+estado 31
+
+   57 expresion: expresionDeAsignacion .
+
+    $default  reduce usando la regla 57 (expresion)
+
+
+estado 32
+
+   45 sentenciaExpresion: listaDeExpresiones . ';'
+
+    ';'  desplazar e ir al estado 65
+
+
+estado 33
+
+   53 listaDeExpresiones: expresion .
+   54                   | expresion . ',' listaDeExpresiones
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ','            desplazar e ir al estado 78
+
+    OP_DECREMENTO  [reduce usando la regla 53 (listaDeExpresiones)]
+    '+'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '-'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '*'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '/'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '^'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '<'            [reduce usando la regla 53 (listaDeExpresiones)]
+    '>'            [reduce usando la regla 53 (listaDeExpresiones)]
+    MAYORIGUAL     [reduce usando la regla 53 (listaDeExpresiones)]
+    MENORIGUAL     [reduce usando la regla 53 (listaDeExpresiones)]
+    YLOGICO        [reduce usando la regla 53 (listaDeExpresiones)]
+    OLOGICO        [reduce usando la regla 53 (listaDeExpresiones)]
+    ','            [reduce usando la regla 53 (listaDeExpresiones)]
+    $default       reduce usando la regla 53 (listaDeExpresiones)
+
+
+estado 34
+
+   67 expresion: opPostDecremento .
+
+    $default  reduce usando la regla 67 (expresion)
+
+
+estado 35
+
+   65 expresion: opPreDecremento .
+
+    $default  reduce usando la regla 65 (expresion)
+
+
+estado 36
+
+   68 expresion: opPostIncremento .
+
+    $default  reduce usando la regla 68 (expresion)
+
+
+estado 37
+
+   66 expresion: opPreIncremento .
+
+    $default  reduce usando la regla 66 (expresion)
+
+
+estado 38
+
+   62 expresion: expresionUnaria .
+
+    $default  reduce usando la regla 62 (expresion)
+
+
+estado 39
+
+   78 opPostIncremento: ID OP_INCREMENTO .
+
+    $default  reduce usando la regla 78 (opPostIncremento)
+
+
+estado 40
+
+   49 opAsignacionGeneral: '=' .
+
+    $default  reduce usando la regla 49 (opAsignacionGeneral)
+
+
+estado 41
+
+   44 opAsignacion: DIVIDIDOIGUAL .
+
+    $default  reduce usando la regla 44 (opAsignacion)
+
+
+estado 42
+
+   43 opAsignacion: PORIGUAL .
+
+    $default  reduce usando la regla 43 (opAsignacion)
+
+
+estado 43
+
+   41 opAsignacion: MENOSIGUAL .
+
+    $default  reduce usando la regla 41 (opAsignacion)
+
+
+estado 44
+
+   42 opAsignacion: MASIGUAL .
+
+    $default  reduce usando la regla 42 (opAsignacion)
+
+
+estado 45
+
+   46 invocacionFuncion: ID '(' . listaDeExpresiones ')'
+   47                  | ID '(' . ')'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+    ')'            desplazar e ir al estado 79
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 80
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 46
+
+   50 opAsignacionGeneral: opAsignacion .
+
+    $default  reduce usando la regla 50 (opAsignacionGeneral)
+
+
+estado 47
+
+   48 expresionDeAsignacion: ID opAsignacionGeneral . listaDeExpresiones
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 81
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 48
+
+   14 sentenciaDeclaracion: TIPO_DATO $@1 . parteFinalDeclaracion
+
+    ID  desplazar e ir al estado 82
+
+    parteFinalDeclaracion  ir al estado 83
+    declaraId              ir al estado 84
+
+
+estado 49
+
+   23 sentenciaIteracion: FOR '(' . expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    $default  reduce usando la regla 27 (expresionOpcional)
+
+    numero                 ir al estado 21
+    expresionOpcional      ir al estado 85
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 86
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 50
+
+   15 sentenciaSeleccion: IF '(' . expresion ')' sentencia
+   16                   | IF '(' . expresion ')' sentencia ELSE sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 87
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 51
+
+   24 sentenciaIteracion: WHILE '(' . expresion ')' sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 88
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 52
+
+   25 sentenciaIteracion: DO sentencia . WHILE '(' expresion ')' ';'
+
+    WHILE  desplazar e ir al estado 89
+
+
+estado 53
+
+   22 constante: CCHAR .
+
+    $default  reduce usando la regla 22 (constante)
+
+
+estado 54
+
+   21 constante: numero .
+
+    $default  reduce usando la regla 21 (constante)
+
+
+estado 55
+
+   18 sentenciaEtiquetada: CASE constante . ':' sentencia
+
+    ':'  desplazar e ir al estado 90
+
+
+estado 56
+
+   19 sentenciaEtiquetada: DEFAULT ':' . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 91
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 57
+
+   17 sentenciaSeleccion: SWITCH '(' . expresion ')' sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 92
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 58
+
+   20 sentenciaRetorno: RETURN expresion . ';'
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ';'            desplazar e ir al estado 93
+
+
+estado 59
+
+   77 opPreDecremento: OP_DECREMENTO ID .
+
+    $default  reduce usando la regla 77 (opPreDecremento)
+
+
+estado 60
+
+   79 opPreIncremento: OP_INCREMENTO ID .
+
+    $default  reduce usando la regla 79 (opPreIncremento)
+
+
+estado 61
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+   80 expresionUnaria: '-' expresion .
+
+    '*'         desplazar e ir al estado 69
+    '/'         desplazar e ir al estado 70
+    '^'         desplazar e ir al estado 71
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 80 (expresionUnaria)
+
+
+estado 62
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   64          | '(' expresion . ')'
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ')'            desplazar e ir al estado 94
+
+
+estado 63
+
+   39 listaDeSentencias: sentencia . listaDeSentencias
+   40                  | sentencia .
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    $default  reduce usando la regla 40 (listaDeSentencias)
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 63
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    listaDeSentencias      ir al estado 95
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 64
+
+   38 sentenciaCompuesta: '{' listaDeSentencias . '}'
+
+    '}'  desplazar e ir al estado 96
+
+
+estado 65
+
+   45 sentenciaExpresion: listaDeExpresiones ';' .
+
+    $default  reduce usando la regla 45 (sentenciaExpresion)
+
+
+estado 66
+
+   76 opPostDecremento: expresion OP_DECREMENTO .
+
+    $default  reduce usando la regla 76 (opPostDecremento)
+
+
+estado 67
+
+   58 expresion: expresion '+' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 97
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 68
+
+   59 expresion: expresion '-' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 98
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 69
+
+   60 expresion: expresion '*' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 99
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 70
+
+   61 expresion: expresion '/' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 100
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 71
+
+   63 expresion: expresion '^' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 101
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 72
+
+   71 expresion: expresion '<' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 102
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 73
+
+   72 expresion: expresion '>' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 103
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 74
+
+   74 expresion: expresion MAYORIGUAL . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 104
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 75
+
+   73 expresion: expresion MENORIGUAL . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 105
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 76
+
+   69 expresion: expresion YLOGICO . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 106
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 77
+
+   70 expresion: expresion OLOGICO . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 107
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 78
+
+   54 listaDeExpresiones: expresion ',' . listaDeExpresiones
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 108
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 79
+
+   47 invocacionFuncion: ID '(' ')' .
+
+    $default  reduce usando la regla 47 (invocacionFuncion)
+
+
+estado 80
+
+   46 invocacionFuncion: ID '(' listaDeExpresiones . ')'
+
+    ')'  desplazar e ir al estado 109
+
+
+estado 81
+
+   48 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones .
+
+    $default  reduce usando la regla 48 (expresionDeAsignacion)
+
+
+estado 82
+
+   30 parteFinalDeclaracion: ID . '(' listaDeParametros ')' declaracionODefFuncion
+   51 declaraId: ID .
+   52          | ID . '=' expresion
+
+    '='  desplazar e ir al estado 110
+    '('  desplazar e ir al estado 111
+
+    $default  reduce usando la regla 51 (declaraId)
+
+
+estado 83
+
+   14 sentenciaDeclaracion: TIPO_DATO $@1 parteFinalDeclaracion .
+
+    $default  reduce usando la regla 14 (sentenciaDeclaracion)
+
+
+estado 84
+
+   28 parteFinalDeclaracion: declaraId . ';'
+   29                      | declaraId . ',' listaIdentificadores ';'
+
+    ','  desplazar e ir al estado 112
+    ';'  desplazar e ir al estado 113
+
+
+estado 85
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional . ';' expresionOpcional ';' expresionOpcional ')' sentencia
+
+    ';'  desplazar e ir al estado 114
+
+
+estado 86
+
+   26 expresionOpcional: expresion .
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+
+    $default  reduce usando la regla 26 (expresionOpcional)
+
+
+estado 87
+
+   15 sentenciaSeleccion: IF '(' expresion . ')' sentencia
+   16                   | IF '(' expresion . ')' sentencia ELSE sentencia
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ')'            desplazar e ir al estado 115
+
+
+estado 88
+
+   24 sentenciaIteracion: WHILE '(' expresion . ')' sentencia
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ')'            desplazar e ir al estado 116
+
+
+estado 89
+
+   25 sentenciaIteracion: DO sentencia WHILE . '(' expresion ')' ';'
+
+    '('  desplazar e ir al estado 117
+
+
+estado 90
+
+   18 sentenciaEtiquetada: CASE constante ':' . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 118
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 91
+
+   19 sentenciaEtiquetada: DEFAULT ':' sentencia .
+
+    $default  reduce usando la regla 19 (sentenciaEtiquetada)
+
+
+estado 92
+
+   17 sentenciaSeleccion: SWITCH '(' expresion . ')' sentencia
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ')'            desplazar e ir al estado 119
+
+
+estado 93
+
+   20 sentenciaRetorno: RETURN expresion ';' .
+
+    $default  reduce usando la regla 20 (sentenciaRetorno)
+
+
+estado 94
+
+   64 expresion: '(' expresion ')' .
+
+    $default  reduce usando la regla 64 (expresion)
+
+
+estado 95
+
+   39 listaDeSentencias: sentencia listaDeSentencias .
+
+    $default  reduce usando la regla 39 (listaDeSentencias)
+
+
+estado 96
+
+   38 sentenciaCompuesta: '{' listaDeSentencias '}' .
+
+    $default  reduce usando la regla 38 (sentenciaCompuesta)
+
+
+estado 97
+
+   58 expresion: expresion . '+' expresion
+   58          | expresion '+' expresion .
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    '*'         desplazar e ir al estado 69
+    '/'         desplazar e ir al estado 70
+    '^'         desplazar e ir al estado 71
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 58 (expresion)
+
+
+estado 98
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   59          | expresion '-' expresion .
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    '*'         desplazar e ir al estado 69
+    '/'         desplazar e ir al estado 70
+    '^'         desplazar e ir al estado 71
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 59 (expresion)
+
+
+estado 99
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   60          | expresion '*' expresion .
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    '^'         desplazar e ir al estado 71
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 60 (expresion)
+
+
+estado 100
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   61          | expresion '/' expresion .
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    '^'         desplazar e ir al estado 71
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 61 (expresion)
+
+
+estado 101
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   63          | expresion '^' expresion .
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    '<'         desplazar e ir al estado 72
+    '>'         desplazar e ir al estado 73
+    MAYORIGUAL  desplazar e ir al estado 74
+    MENORIGUAL  desplazar e ir al estado 75
+    YLOGICO     desplazar e ir al estado 76
+    OLOGICO     desplazar e ir al estado 77
+
+    $default  reduce usando la regla 63 (expresion)
+
+
+estado 102
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   71          | expresion '<' expresion .
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    YLOGICO  desplazar e ir al estado 76
+    OLOGICO  desplazar e ir al estado 77
+
+    $default  reduce usando la regla 71 (expresion)
+
+
+estado 103
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   72          | expresion '>' expresion .
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    YLOGICO  desplazar e ir al estado 76
+    OLOGICO  desplazar e ir al estado 77
+
+    $default  reduce usando la regla 72 (expresion)
+
+
+estado 104
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   74          | expresion MAYORIGUAL expresion .
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    YLOGICO  desplazar e ir al estado 76
+    OLOGICO  desplazar e ir al estado 77
+
+    $default  reduce usando la regla 74 (expresion)
+
+
+estado 105
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   73          | expresion MENORIGUAL expresion .
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    YLOGICO  desplazar e ir al estado 76
+    OLOGICO  desplazar e ir al estado 77
+
+    $default  reduce usando la regla 73 (expresion)
+
+
+estado 106
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   69          | expresion YLOGICO expresion .
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OLOGICO  desplazar e ir al estado 77
+
+    $default  reduce usando la regla 69 (expresion)
+
+
+estado 107
+
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   70          | expresion OLOGICO expresion .
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    $default  reduce usando la regla 70 (expresion)
+
+
+estado 108
+
+   54 listaDeExpresiones: expresion ',' listaDeExpresiones .
+
+    $default  reduce usando la regla 54 (listaDeExpresiones)
+
+
+estado 109
+
+   46 invocacionFuncion: ID '(' listaDeExpresiones ')' .
+
+    $default  reduce usando la regla 46 (invocacionFuncion)
+
+
+estado 110
+
+   52 declaraId: ID '=' . expresion
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 120
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 111
+
+   30 parteFinalDeclaracion: ID '(' . listaDeParametros ')' declaracionODefFuncion
+
+    TIPO_DATO  desplazar e ir al estado 121
+
+    $default  reduce usando la regla 35 (listaDeParametros)
+
+    listaDeParametros  ir al estado 122
+
+
+estado 112
+
+   29 parteFinalDeclaracion: declaraId ',' . listaIdentificadores ';'
+
+    ID  desplazar e ir al estado 123
+
+    listaIdentificadores  ir al estado 124
+    declaraId             ir al estado 125
+
+
+estado 113
+
+   28 parteFinalDeclaracion: declaraId ';' .
+
+    $default  reduce usando la regla 28 (parteFinalDeclaracion)
+
+
+estado 114
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' . expresionOpcional ';' expresionOpcional ')' sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    $default  reduce usando la regla 27 (expresionOpcional)
+
+    numero                 ir al estado 21
+    expresionOpcional      ir al estado 126
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 86
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 115
+
+   15 sentenciaSeleccion: IF '(' expresion ')' . sentencia
+   16                   | IF '(' expresion ')' . sentencia ELSE sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 127
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 116
+
+   24 sentenciaIteracion: WHILE '(' expresion ')' . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 128
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 117
+
+   25 sentenciaIteracion: DO sentencia WHILE '(' . expresion ')' ';'
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    numero                 ir al estado 21
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 129
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 118
+
+   18 sentenciaEtiquetada: CASE constante ':' sentencia .
+
+    $default  reduce usando la regla 18 (sentenciaEtiquetada)
+
+
+estado 119
+
+   17 sentenciaSeleccion: SWITCH '(' expresion ')' . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 130
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 120
+
+   52 declaraId: ID '=' expresion .
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+
+    $default  reduce usando la regla 52 (declaraId)
+
+
+estado 121
+
+   36 listaDeParametros: TIPO_DATO . ID ',' listaDeParametros
+   37                  | TIPO_DATO . ID
+
+    ID  desplazar e ir al estado 131
+
+
+estado 122
+
+   30 parteFinalDeclaracion: ID '(' listaDeParametros . ')' declaracionODefFuncion
+
+    ')'  desplazar e ir al estado 132
+
+
+estado 123
+
+   51 declaraId: ID .
+   52          | ID . '=' expresion
+
+    '='  desplazar e ir al estado 110
+
+    $default  reduce usando la regla 51 (declaraId)
+
+
+estado 124
+
+   29 parteFinalDeclaracion: declaraId ',' listaIdentificadores . ';'
+
+    ';'  desplazar e ir al estado 133
+
+
+estado 125
+
+   33 listaIdentificadores: declaraId . ',' listaIdentificadores
+   34                     | declaraId .
+
+    ','  desplazar e ir al estado 134
+
+    $default  reduce usando la regla 34 (listaIdentificadores)
+
+
+estado 126
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional . ';' expresionOpcional ')' sentencia
+
+    ';'  desplazar e ir al estado 135
+
+
+estado 127
+
+   15 sentenciaSeleccion: IF '(' expresion ')' sentencia .
+   16                   | IF '(' expresion ')' sentencia . ELSE sentencia
+
+    ELSE  desplazar e ir al estado 136
+
+    ELSE      [reduce usando la regla 15 (sentenciaSeleccion)]
+    $default  reduce usando la regla 15 (sentenciaSeleccion)
+
+
+estado 128
+
+   24 sentenciaIteracion: WHILE '(' expresion ')' sentencia .
+
+    $default  reduce usando la regla 24 (sentenciaIteracion)
+
+
+estado 129
+
+   25 sentenciaIteracion: DO sentencia WHILE '(' expresion . ')' ';'
+   58 expresion: expresion . '+' expresion
+   59          | expresion . '-' expresion
+   60          | expresion . '*' expresion
+   61          | expresion . '/' expresion
+   63          | expresion . '^' expresion
+   69          | expresion . YLOGICO expresion
+   70          | expresion . OLOGICO expresion
+   71          | expresion . '<' expresion
+   72          | expresion . '>' expresion
+   73          | expresion . MENORIGUAL expresion
+   74          | expresion . MAYORIGUAL expresion
+   76 opPostDecremento: expresion . OP_DECREMENTO
+
+    OP_DECREMENTO  desplazar e ir al estado 66
+    '+'            desplazar e ir al estado 67
+    '-'            desplazar e ir al estado 68
+    '*'            desplazar e ir al estado 69
+    '/'            desplazar e ir al estado 70
+    '^'            desplazar e ir al estado 71
+    '<'            desplazar e ir al estado 72
+    '>'            desplazar e ir al estado 73
+    MAYORIGUAL     desplazar e ir al estado 74
+    MENORIGUAL     desplazar e ir al estado 75
+    YLOGICO        desplazar e ir al estado 76
+    OLOGICO        desplazar e ir al estado 77
+    ')'            desplazar e ir al estado 137
+
+
+estado 130
+
+   17 sentenciaSeleccion: SWITCH '(' expresion ')' sentencia .
+
+    $default  reduce usando la regla 17 (sentenciaSeleccion)
+
+
+estado 131
+
+   36 listaDeParametros: TIPO_DATO ID . ',' listaDeParametros
+   37                  | TIPO_DATO ID .
+
+    ','  desplazar e ir al estado 138
+
+    $default  reduce usando la regla 37 (listaDeParametros)
+
+
+estado 132
+
+   30 parteFinalDeclaracion: ID '(' listaDeParametros ')' . declaracionODefFuncion
+
+    ';'  desplazar e ir al estado 139
+    '{'  desplazar e ir al estado 20
+
+    declaracionODefFuncion  ir al estado 140
+    sentenciaCompuesta      ir al estado 141
+
+
+estado 133
+
+   29 parteFinalDeclaracion: declaraId ',' listaIdentificadores ';' .
+
+    $default  reduce usando la regla 29 (parteFinalDeclaracion)
+
+
+estado 134
+
+   33 listaIdentificadores: declaraId ',' . listaIdentificadores
+
+    ID  desplazar e ir al estado 123
+
+    listaIdentificadores  ir al estado 142
+    declaraId             ir al estado 125
+
+
+estado 135
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' . expresionOpcional ')' sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    REAL           desplazar e ir al estado 6
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    '('            desplazar e ir al estado 19
+
+    $default  reduce usando la regla 27 (expresionOpcional)
+
+    numero                 ir al estado 21
+    expresionOpcional      ir al estado 143
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    expresion              ir al estado 86
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 136
+
+   16 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 144
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 137
+
+   25 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' . ';'
+
+    ';'  desplazar e ir al estado 145
+
+
+estado 138
+
+   36 listaDeParametros: TIPO_DATO ID ',' . listaDeParametros
+
+    TIPO_DATO  desplazar e ir al estado 121
+
+    $default  reduce usando la regla 35 (listaDeParametros)
+
+    listaDeParametros  ir al estado 146
+
+
+estado 139
+
+   31 declaracionODefFuncion: ';' .
+
+    $default  reduce usando la regla 31 (declaracionODefFuncion)
+
+
+estado 140
+
+   30 parteFinalDeclaracion: ID '(' listaDeParametros ')' declaracionODefFuncion .
+
+    $default  reduce usando la regla 30 (parteFinalDeclaracion)
+
+
+estado 141
+
+   32 declaracionODefFuncion: sentenciaCompuesta .
+
+    $default  reduce usando la regla 32 (declaracionODefFuncion)
+
+
+estado 142
+
+   33 listaIdentificadores: declaraId ',' listaIdentificadores .
+
+    $default  reduce usando la regla 33 (listaIdentificadores)
+
+
+estado 143
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional . ')' sentencia
+
+    ')'  desplazar e ir al estado 147
+
+
+estado 144
+
+   16 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE sentencia .
+
+    $default  reduce usando la regla 16 (sentenciaSeleccion)
+
+
+estado 145
+
+   25 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' ';' .
+
+    $default  reduce usando la regla 25 (sentenciaIteracion)
+
+
+estado 146
+
+   36 listaDeParametros: TIPO_DATO ID ',' listaDeParametros .
+
+    $default  reduce usando la regla 36 (listaDeParametros)
+
+
+estado 147
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' . sentencia
+
+    NUM            desplazar e ir al estado 3
+    ID             desplazar e ir al estado 4
+    TIPO_DATO      desplazar e ir al estado 5
+    REAL           desplazar e ir al estado 6
+    FOR            desplazar e ir al estado 7
+    IF             desplazar e ir al estado 8
+    WHILE          desplazar e ir al estado 9
+    DO             desplazar e ir al estado 10
+    CASE           desplazar e ir al estado 11
+    DEFAULT        desplazar e ir al estado 12
+    SWITCH         desplazar e ir al estado 13
+    RETURN         desplazar e ir al estado 14
+    OP_DECREMENTO  desplazar e ir al estado 15
+    OP_INCREMENTO  desplazar e ir al estado 16
+    '-'            desplazar e ir al estado 17
+    ';'            desplazar e ir al estado 18
+    '('            desplazar e ir al estado 19
+    '{'            desplazar e ir al estado 20
+
+    numero                 ir al estado 21
+    sentencia              ir al estado 148
+    sentenciaDeclaracion   ir al estado 23
+    sentenciaSeleccion     ir al estado 24
+    sentenciaEtiquetada    ir al estado 25
+    sentenciaRetorno       ir al estado 26
+    sentenciaIteracion     ir al estado 27
+    sentenciaCompuesta     ir al estado 28
+    sentenciaExpresion     ir al estado 29
+    invocacionFuncion      ir al estado 30
+    expresionDeAsignacion  ir al estado 31
+    listaDeExpresiones     ir al estado 32
+    expresion              ir al estado 33
+    opPostDecremento       ir al estado 34
+    opPreDecremento        ir al estado 35
+    opPostIncremento       ir al estado 36
+    opPreIncremento        ir al estado 37
+    expresionUnaria        ir al estado 38
+
+
+estado 148
+
+   23 sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia .
+
+    $default  reduce usando la regla 23 (sentenciaIteracion)

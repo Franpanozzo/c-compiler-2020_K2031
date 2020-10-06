@@ -4,9 +4,12 @@
 #include <string.h>
 #define YYDEBUG 1
 
+extern FILE * yyin;
+
 int flag_error=0;
 int contador=0;
-char* tipo;
+char* tipoDato;
+char* idFuncion;
 
 int yylex();
 int yywrap(){
@@ -25,9 +28,8 @@ int entero;
 int tipo;
 double real;
 char caracter;
-struct{int tipo, char* nombre} tipoYNombre;
+//struct{int tipo, char* nombre} tipoYNombre;
 }
-
 %token <caracter> CCHAR
 %token <entero> NUM
 %token <cadena> LITERALCADENA
@@ -35,7 +37,7 @@ struct{int tipo, char* nombre} tipoYNombre;
 %token <cadena> TIPO_DATO
 %token <entero> ERROR
 %token <real> REAL
-%token TOKEN_VOID
+%token <cadena> TOKEN_VOID
 %token FOR
 %token IF
 %token WHILE
@@ -44,6 +46,7 @@ struct{int tipo, char* nombre} tipoYNombre;
 %token DEFAULT
 %token SWITCH
 %token ELSE
+%token RETURN
 
 %type <entero> expresion
 %type <entero> numero
@@ -61,7 +64,7 @@ struct{int tipo, char* nombre} tipoYNombre;
 %right '=' MASIGUAL MENOSIGUAL PORIGUAL DIVIDIDOIGUAL
 %left ','
 
-%start sentencia
+%start input
 
 %% /* A continuacion las reglas gramaticales y las acciones */
 
@@ -79,38 +82,46 @@ sentencia:  sentenciaDeclaracion
 			| sentenciaIteracion
 			| sentenciaEtiquetada
 			| sentenciaSeleccion
+			| sentenciaRetorno
 			| /* vacio */  ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO parteFinalDeclaracion 
+sentenciaDeclaracion: TIPO_DATO {tipoDato = $<cadena>1} parteFinalDeclaracion 
+					  | TOKEN_VOID {tipoDato = $<cadena>1} sentenciaFuncion
+; 
+
+sentenciaSeleccion: IF '(' expresion ')' sentencia {printf("\nSe define una sentencia IF\n");}
+					| IF '(' expresion ')' sentencia ELSE sentencia {printf("\nSe define una sentencia IF seguida de un ELSE\n");}
+					| SWITCH '(' expresion ')' sentencia {printf("\nSe define una sentencia de tipo SWITCH\n");}
 ;
 
-sentenciaSeleccion: IF '(' expresion ')' sentencia 
-					| IF '(' expresion ')' sentencia ELSE sentencia 
-					| SWITCH '(' expresion ')' sentencia
-;
-
-sentenciaEtiquetada: CASE constante ':' sentencia
+sentenciaEtiquetada: CASE constante ':' sentencia 
 					| DEFAULT ':' sentencia
+;
+
+sentenciaRetorno: RETURN expresion ';'
 ;
 
 constante: numero | CCHAR
 ;
 
-sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia
-					| WHILE '(' expresion ')' sentencia
-					| DO sentencia WHILE '(' expresion ')'';'
+sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia {printf("Se define una sentencia FOR");}
+					| WHILE '(' expresion ')' sentencia {printf("Se define una sentencia WHILE");}
+					| DO sentencia WHILE '(' expresion ')'';' {printf("Se define una sentencia DO WHILE");}
 ;
 
 expresionOpcional: expresion | /*vacio*/ ;
 
 parteFinalDeclaracion: declaraId';' {}
 				| declaraId ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
-				| ID '(' listaDeParametros ')' declaracionODefFuncion {}
+				| sentenciaFuncion
 ;
 
-declaracionODefFuncion:  ';' {printf("\nSe declara una funcion\n");}
-						| sentenciaCompuesta  {printf("\nSe define una funcion\n");}
+sentenciaFuncion: ID {idFuncion = $<cadena>1} '(' listaDeParametros ')' declaracionODefFuncion {}
+;
+
+declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoDato);}
+						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoDato);}
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
@@ -138,8 +149,8 @@ opAsignacion:	MENOSIGUAL
 sentenciaExpresion: listaDeExpresiones';'	{}
 ;
 
-invocacionFuncion: ID '(' listaDeExpresiones ')'
-					| '('')'
+invocacionFuncion: ID '(' listaDeExpresiones ')' {printf("\nSe invoca la funcion %s con parametros\n",$<cadena>1);}
+				   |ID '('')' {printf("\nSe invoca la funcion %s\n",$<cadena>1)}
 ;
 
 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
@@ -149,13 +160,13 @@ opAsignacionGeneral: '='
     				| opAsignacion
 ;
 
-declaraId: 	ID {printf("\n-->Declaracion sin asignacion: $s.\n", $<cadena>1);}
-			| ID '=' expresion {printf("\n-->Declaracion con asignacion: %s.\n", $<cadena>1);}
+declaraId: 	ID {printf("\n-->Se declara el identificador %s de tipo %s sin asignacion: .\n", $<cadena>1,tipoDato);}
+			| ID '=' expresion {printf("\n-->Se declara el identificador %s de tipo %s con asignacion : %s.\n", $<cadena>1,tipoDato);}
 ;
 
 listaDeExpresiones: expresion
 			 	    | expresion ',' listaDeExpresiones
-
+;
 expresion:	 numero
 			| ID
 			| expresionDeAsignacion
@@ -196,7 +207,7 @@ int main ()
 {
 #ifdef BISON_DEBUG
         yydebug = 1;
-#endif
+# endif
   printf("Ingrese la declaracion: ");
   yyparse ();
 }

@@ -1,7 +1,5 @@
 %option noyywrap
 
-yyin = fopen("entrada.txt", "r");
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +34,8 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "case" {return CASE;}
 "do" {return DO;}
 "default" {return DEFAULT;}
-"void" {return TOKEN_VOID;}
+"void" {yylval.cadena = strdup(yytext); return TOKEN_VOID;}
+"return" {return RETURN;}
 "//"[^\n]*$ {;}
 "++" {return OP_INCREMENTO;}
 "--" {return OP_DECREMENTO;}
@@ -51,22 +50,20 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "*=" {return PORIGUAL;}
 "/=" {return DIVIDIDOIGUAL;}
 [a-zA-Z_][a-zA-Z0-9_]* {yylval.cadena = strdup(yytext); return ID;}
-[+-/*=:()^{};&] {return yytext[0];}
+[+-/*=:()^{};&<>] {return yytext[0];}
 \"([^\"]*)\" {yylval.cadena = strdup(yytext);return LITERALCADENA;}
 "/*"([^*]|\*+[^/])*\*+\/ {}
 \n {}
-[^ ] {return ERROR;}
+[^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n",yytext);}
 
 %%
 
 /*
 int main() 
 {
-    freopen("reporte.txt", "w", stdout);
+    //freopen("reporte.txt", "w", stdout);
     yyin = fopen("entrada.txt", "r");
-    yyout = fopen("salida.txt", "w");
     yylex();
 
     return 0;
-}
-*/
+}*/
