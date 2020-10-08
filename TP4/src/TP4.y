@@ -1,24 +1,26 @@
 %{
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #define YYDEBUG 1
 
+extern int lineno;
 extern FILE * yyin;
+
+char* tipoDato;
+char* idFuncion;
+char* tipoFuncion;
 
 int flag_error=0;
 int contador=0;
-char* tipoDato;
-char* idFuncion;
 
 int yylex();
 int yywrap(){
 	return(1);
 }
 
-void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
-}
+void yyerror (char const *s);
 
 %}
 
@@ -28,16 +30,16 @@ int entero;
 int tipo;
 double real;
 char caracter;
-//struct{int tipo, char* nombre} tipoYNombre;
+
 }
 %token <caracter> CCHAR
 %token <entero> NUM
 %token <cadena> LITERALCADENA
 %token <cadena> ID
 %token <cadena> TIPO_DATO
-%token <entero> ERROR
 %token <real> REAL
 %token <cadena> TOKEN_VOID
+%token <entero> error
 %token FOR
 %token IF
 %token WHILE
@@ -47,6 +49,8 @@ char caracter;
 %token SWITCH
 %token ELSE
 %token RETURN
+%token BREAK
+%token CONTINUE
 
 %type <entero> expresion
 %type <entero> numero
@@ -71,6 +75,7 @@ char caracter;
 // Cambiar el axioma por una lista de sentencias
 input:    /* vacio */
         | input sentencia
+		| input error 
 ;
 
 numero: NUM
@@ -83,61 +88,82 @@ sentencia:  sentenciaDeclaracion
 			| sentenciaEtiquetada
 			| sentenciaSeleccion
 			| sentenciaRetorno
+			| sentenciaSalto
 			| /* vacio */  ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO {tipoDato = $<cadena>1} parteFinalDeclaracion 
-					  | TOKEN_VOID {tipoDato = $<cadena>1} sentenciaFuncion
+sentenciaSalto: BREAK ';'
+				| CONTINUE ';'
+;
+
+sentenciaDeclaracion: TIPO_DATO {tipoDato = strdup($<cadena>1);} parteFinalDeclaracion 
+					  | TOKEN_VOID {tipoFuncion = strdup($<cadena>1);} sentenciaFuncion
+					  | error 
 ; 
 
 sentenciaSeleccion: IF '(' expresion ')' sentencia {printf("\nSe define una sentencia IF\n");}
 					| IF '(' expresion ')' sentencia ELSE sentencia {printf("\nSe define una sentencia IF seguida de un ELSE\n");}
 					| SWITCH '(' expresion ')' sentencia {printf("\nSe define una sentencia de tipo SWITCH\n");}
+					| error 
 ;
 
 sentenciaEtiquetada: CASE constante ':' sentencia 
 					| DEFAULT ':' sentencia
+					| error
 ;
 
 sentenciaRetorno: RETURN expresion ';'
 ;
 
-constante: numero | CCHAR
+constante: numero | CCHAR		
 ;
 
-sentenciaIteracion: FOR '(' expresionOpcional ';' expresionOpcional ';' expresionOpcional ')' sentencia {printf("Se define una sentencia FOR");}
-					| WHILE '(' expresion ')' sentencia {printf("Se define una sentencia WHILE");}
-					| DO sentencia WHILE '(' expresion ')'';' {printf("Se define una sentencia DO WHILE");}
+sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' sentencia {printf("\nSe define una sentencia FOR\n");}
+					| WHILE '(' expresion ')' sentencia {printf("\nSe define una sentencia WHILE\n");}
+					| DO sentencia WHILE '(' expresion ')'';' {printf("\nSe define una sentencia DO WHILE\n");}
+					| error
 ;
 
-expresionOpcional: expresion | /*vacio*/ ;
+
+primeraExpresionFor: expresion | TIPO_DATO ID '=' expresion | /*vacio*/
+;
+
+expresionOpcional: expresion | /*vacio*/
+;
 
 parteFinalDeclaracion: declaraId';' {}
 				| declaraId ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
-				| sentenciaFuncion
+				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);}
+				| error
 ;
 
-sentenciaFuncion: ID {idFuncion = $<cadena>1} '(' listaDeParametros ')' declaracionODefFuncion {}
+sentenciaFuncion: ID {idFuncion =strdup($<cadena>1);} '(' listaDeParametros ')' declaracionODefFuncion {}
+				  | error
 ;
 
-declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoDato);}
-						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoDato);}
+declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoFuncion);}
+						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoFuncion);}
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
                     | declaraId
+					| error
 ;
 
 listaDeParametros: /* vacio */
 					|TIPO_DATO ID ',' listaDeParametros
 					| TIPO_DATO ID
+					| error
 ;
 
-sentenciaCompuesta: '{'listaDeSentencias'}' {}
+sentenciaCompuesta: '{'listaDeSentencias'}'
+					| error
 ;
 
-listaDeSentencias: sentencia listaDeSentencias {}
-					| sentencia {}
+listaDeSentencias: sentencia listaDeSentencias 
+					| sentencia 
+					| /*vacio*/
+					| error
 ;
 
 opAsignacion:	MENOSIGUAL
@@ -146,14 +172,17 @@ opAsignacion:	MENOSIGUAL
 			   | DIVIDIDOIGUAL
 ;
 
-sentenciaExpresion: listaDeExpresiones';'	{}
+sentenciaExpresion: listaDeExpresiones';'
+					| error
 ;
 
 invocacionFuncion: ID '(' listaDeExpresiones ')' {printf("\nSe invoca la funcion %s con parametros\n",$<cadena>1);}
 				   |ID '('')' {printf("\nSe invoca la funcion %s\n",$<cadena>1)}
+				   | error
 ;
 
 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
+						| error
 ;
 
 opAsignacionGeneral: '='
@@ -161,13 +190,16 @@ opAsignacionGeneral: '='
 ;
 
 declaraId: 	ID {printf("\n-->Se declara el identificador %s de tipo %s sin asignacion: .\n", $<cadena>1,tipoDato);}
-			| ID '=' expresion {printf("\n-->Se declara el identificador %s de tipo %s con asignacion : %s.\n", $<cadena>1,tipoDato);}
+			| ID '=' expresion {printf("\n-->Se declara el identificador %s de tipo %s con asignacion \n", $<cadena>1,tipoDato);}
+			| error
 ;
 
 listaDeExpresiones: expresion
 			 	    | expresion ',' listaDeExpresiones
+					| error 
 ;
-expresion:	 numero
+expresion:	 constante
+			| LITERALCADENA
 			| ID
 			| expresionDeAsignacion
 			| expresion '+' expresion
@@ -188,6 +220,7 @@ expresion:	 numero
 			| expresion MENORIGUAL expresion
 			| expresion MAYORIGUAL expresion
 			| invocacionFuncion
+			| error 
 ;
 
 opPostDecremento: expresion OP_DECREMENTO
@@ -203,11 +236,17 @@ expresionUnaria: '-' expresion
 
 %%
 
+void yyerror (char const *s)
+{
+  fprintf(stderr, "Error Sintactico en la linea %d \n", lineno);
+  exit(1);
+}
+
 int main ()
 {
 #ifdef BISON_DEBUG
         yydebug = 1;
 # endif
-  printf("Ingrese la declaracion: ");
+  yyin=fopen("entrada.txt","r");
   yyparse ();
 }

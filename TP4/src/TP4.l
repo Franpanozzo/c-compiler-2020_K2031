@@ -6,6 +6,9 @@
 #include <string.h>
 #include <math.h>
 #include "TP4.tab.h"
+
+int lineno = 1;
+
 %}
 
 DIGITO_DECIMAL [0-9] 
@@ -31,8 +34,10 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "else" {return ELSE;}
 "for" {return FOR;}
 "while" {return WHILE;}
+"break" {return BREAK;}
 "case" {return CASE;}
 "do" {return DO;}
+"switch" {return SWITCH;}
 "default" {return DEFAULT;}
 "void" {yylval.cadena = strdup(yytext); return TOKEN_VOID;}
 "return" {return RETURN;}
@@ -53,17 +58,7 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 [+-/*=:()^{};&<>] {return yytext[0];}
 \"([^\"]*)\" {yylval.cadena = strdup(yytext);return LITERALCADENA;}
 "/*"([^*]|\*+[^/])*\*+\/ {}
-\n {}
+\n {lineno++;}
 [^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n",yytext);}
 
 %%
-
-/*
-int main() 
-{
-    //freopen("reporte.txt", "w", stdout);
-    yyin = fopen("entrada.txt", "r");
-    yylex();
-
-    return 0;
-}*/

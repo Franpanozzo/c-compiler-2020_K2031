@@ -1,1 +1,18 @@
-int a;
+int a(int b){
+    char abeja=5+'a';
+}
+double c(){
+    return a;
+}
+switch(y + x - ((10)+5))
+{
+    case 0:
+    case 1:
+        unaFuncion(10);
+        break;
+    case 8:
+        otraFuncion(5, 10, "hola");
+        break;
+    default:
+        a(10);
+}

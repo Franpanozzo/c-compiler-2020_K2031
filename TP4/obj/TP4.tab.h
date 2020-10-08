@@ -79,7 +79,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 27 "TP4.y"
+#line 25 "../src/TP4.y"
 
 char* cadena;          
 int entero;                     
@@ -89,9 +89,8 @@ char caracter;
 
 
 
-
 /* Line 1676 of yacc.c  */
-#line 95 "TP4.tab.h"
+#line 94 "TP4.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
