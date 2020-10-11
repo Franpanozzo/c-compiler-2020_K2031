@@ -1,8 +1,5 @@
-int a(int b){
+void a(int b){ 
     char abeja=5+'a';
-}
-double c(){
-    return a;
 }
 switch(y + x - ((10)+5))
 {
