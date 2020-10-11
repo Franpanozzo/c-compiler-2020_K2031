@@ -133,7 +133,7 @@ expresionOpcional: expresion | /*vacio*/
 
 parteFinalDeclaracion: declaraId';' {}
 				| declaraId ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
-				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);}
+				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);} //Por yydebug dice que deriva pero no ejecuta el codigo asociado
 				| error
 ;
 
