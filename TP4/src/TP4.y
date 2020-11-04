@@ -8,9 +8,9 @@
 extern int lineno;
 extern FILE * yyin;
 
-char* tipoDato;
-char* idFuncion;
-char* tipoFuncion;
+char* tipoDato="";
+char* idFuncion="";
+char* tipoFuncion="";
 
 int flag_error=0;
 int contador=0;
@@ -96,8 +96,8 @@ sentenciaSalto: BREAK ';'
 				| CONTINUE ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO {tipoDato = strdup($<cadena>1);} parteFinalDeclaracion 
-					  | TOKEN_VOID {tipoFuncion = strdup($<cadena>1);} sentenciaFuncion
+sentenciaDeclaracion: TIPO_DATO {tipoDato = $<cadena>1;} parteFinalDeclaracion 
+					  | TOKEN_VOID {tipoFuncion = $<cadena>1;} sentenciaFuncion
 					  | error 
 ; 
 
@@ -133,16 +133,16 @@ expresionOpcional: expresion | /*vacio*/
 
 parteFinalDeclaracion: declaraId';' {}
 				| declaraId ',' listaIdentificadores';' {printf("\nSe declaro lista de variables\n");}
-				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);} //Por yydebug dice que deriva pero no ejecuta el codigo asociado
+				| sentenciaFuncion 
 				| error
 ;
 
-sentenciaFuncion: ID {idFuncion =strdup($<cadena>1);} '(' listaDeParametros ')' declaracionODefFuncion {}
+sentenciaFuncion: ID {idFuncion = $<cadena>1;if(tipoDato!="" ){tipoFuncion=tipoDato;};} '(' listaDeParametros ')' declaracionODefFuncion {}
 				  | error
 ;
 
-declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoFuncion);}
-						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoFuncion);}
+declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoFuncion);tipoDato="";}
+						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoFuncion);tipoDato="";}
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
@@ -189,7 +189,7 @@ opAsignacionGeneral: '='
     				| opAsignacion
 ;
 
-declaraId: 	ID {printf("\n-->Se declara el identificador %s de tipo %s sin asignacion: .\n", $<cadena>1,tipoDato);}
+declaraId: 	ID {printf("\n-->Se declara el identificador %s de tipo %s sin asignacion.\n", $<cadena>1,tipoDato);}
 			| ID '=' expresion {printf("\n-->Se declara el identificador %s de tipo %s con asignacion \n", $<cadena>1,tipoDato);}
 			| error
 ;
