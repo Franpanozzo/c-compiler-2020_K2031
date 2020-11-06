@@ -12,6 +12,8 @@ char* tipoDato;
 char* idFuncion;
 char* tipoFuncion;
 
+//NODOS
+
 typedef struct tNodoVariable
 {
 	char* tipoDato;
@@ -19,25 +21,31 @@ typedef struct tNodoVariable
 	struct tNodoVariable* sgte;
 } tNodoVariable;
 
+
 typedef struct tNodoParametro
 {
 	char* tipo;
 	struct tNodoParametro* sgte;
 } tNodoParametro;
 
+
 typedef tNodoParametro* tColaParametro;
+
 
 typedef struct tNodoFuncion
 {
 	char* tipoDato;
 	char* identificador;
-	tColaParametro parametros;
+	tColaParametro principioParametros;
+	tColaParametro finalParametros;
 	struct tNodoFuncion* sgte;
 } tNodoFuncion;
 
 tNodoFuncion* listaFunciones = NULL;
 
 tNodoVariable* listaVariables = NULL;
+
+//FUNCIONES
 
 tNodoVariable* encontrarEnListaVariable(char* identificador)
 {
@@ -73,23 +81,31 @@ c > b > a > d
 FIFO 
 */
 
-
-ID {buscoID} (lista)
-
-lista : TIPO ID {Tipo = desencolar(ID)}
+int suma(int a; int b)
 
 
-
-
-
-void encolarParametro(char* identificador, tColaParametro colaParametro)
+void encolarParametro(char* tipo, tColaParametro colaParametro)
 {
 
 }
 
-void agregarFuncion(char* idFuncion, char* tipo, tColaParametro colaParametro)
-{
+int suma(int a, int b)
 
+
+void agregarFuncion(char* identificador, char* tipo, tColaParametro colaParametro)
+{
+	if(encontrarEnListaDeFunciones(identificador))
+	{
+		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", identificador);
+		return;
+	}
+	tNodoFuncion* p = (tNodoFuncion*) malloc(sizeof(tNodoFuncion));
+	p->tipoDato = strdup(tipo);
+	p->identificador = strdup(identificador);
+	p->parametros = strdup(colaParametro);
+
+	p->sgte = listaFunciones;
+	listaFunciones = p;
 }
 
 
@@ -109,6 +125,8 @@ void agregarDeclaracion(char* identificador, char* tipo)
 	listaVariables = p;
 }
 
+
+
 void imprimirListaVariables()
 {
 	printf("IDENTIFICADOR	TIPO\n\n");
@@ -126,9 +144,15 @@ void imprimirListaVariables()
 }
 
 
+/*void validarTiposOperacionesBinarias(union primerParametro, union segundoParametro, char* operacion, union resultado)
 
-
-
+if(primerParametro.tipo == sengundoParametro.tipo) {
+	switch(operacion)
+	{
+		case SUMA:
+		return primerParametro.
+	} 
+}*/
 
 
 
@@ -146,22 +170,35 @@ void yyerror (char const *s);
 
 %}
 
+
+
 %union {
-char* cadena;          
-int entero;                     
-int tipo;
-double real;
-char caracter;
+	 struct yylval_struct {
+		char* cadena;          
+		int entero;                     
+		int tipo;
+		double real;
+		char caracter;
+	}estructuraDeTipos;
 }
 
-%token <caracter> CCHAR
-%token <entero> NUM
-%token <cadena> LITERALCADENA
-%token <cadena> ID
-%token <cadena> TIPO_DATO
-%token <real> REAL
-%token <cadena> TOKEN_VOID
-%token <entero> error
+/*
+	tipo:
+		1 = int
+		2 = float
+		3 = char
+		5 = void
+*/
+
+
+%token <estructuraDeTipos> CCHAR
+%token <estructuraDeTipos> NUM
+%token <estructuraDeTipos> LITERALCADENA
+%token <estructuraDeTipos> ID
+%token <estructuraDeTipos> TIPO_DATO
+%token <estructuraDeTipos> REAL
+%token <estructuraDeTipos> TOKEN_VOID
+%token <estructuraDeTipos> error
 %token FOR
 %token IF
 %token WHILE
@@ -174,10 +211,10 @@ char caracter;
 %token BREAK
 %token CONTINUE
 
-%type <entero> expresion
-%type <entero> numero
-%type <entero> constante
-%type <tipoYNombre> declaraId
+%type <estructuraDeTipos> expresion
+%type <estructuraDeTipos> numero
+%type <estructuraDeTipos> constante
+%type <estructuraDeTipos> declaraId
 
 %left OP_INCREMENTO OP_DECREMENTO
 %left '+' '-'
@@ -189,6 +226,7 @@ char caracter;
 %left OLOGICO
 %right '=' MASIGUAL MENOSIGUAL PORIGUAL DIVIDIDOIGUAL
 %left ','
+
 
 %start input
 
@@ -218,8 +256,8 @@ sentenciaSalto: BREAK ';'
 				| CONTINUE ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO {tipoDato = strdup($<cadena>1);} parteFinalDeclaracion 
-					  | TOKEN_VOID {tipoFuncion = strdup($<cadena>1);} sentenciaFuncion
+sentenciaDeclaracion: TIPO_DATO {tipoDato = strdup($<estructuraDeTipos>1.cadena);} parteFinalDeclaracion 
+					  | TOKEN_VOID {tipoFuncion = strdup($<estructuraDeTipos>1.cadena);} sentenciaFuncion
 					  | error 
 ; 
 
@@ -255,11 +293,11 @@ expresionOpcional: expresion | /*vacio*/
 
 parteFinalDeclaracion: declaraId {}
 				| declaraId ',' listaIdentificadores';' {}
-				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);} //Por yydebug dice que deriva pero no ejecuta el codigo asociado
+				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);} 
 				| error
 ;
-
-sentenciaFuncion: ID {tColaParametro colaP; tColaParametro colaF = colaP = (tColaParametro) malloc(sizeof(ttNodoParametro));} '(' listaDeParametros ')' declaracionODefFuncion {agregarFuncion($<cadena>1, cola);}
+// new nodoDeListaDeFunciones, nodoDeListaDeFunciones.pParametros = new pColaParametros, new fColaParametros = pColaParametros
+sentenciaFuncion: ID /*{crear nodo de funcion, asignarle el tipo y el identificador}*/ '(' listaDeParametros ')' declaracionODefFuncion
 				  | error
 ;
 
@@ -273,8 +311,9 @@ listaIdentificadores: declaraId ',' listaIdentificadores
 ;
 
 listaDeParametros: /* vacio */
-					|TIPO_DATO ID ',' listaDeParametros {encolarParametro($<cadena>1, &colaP, &colaF);}
-					| TIPO_DATO ID {encolarParametro($<cadena>,  &colaP, &colaF);}
+					|TIPO_DATO ID ',' listaDeParametros {/*encolarParametro($<estructuraDeTipos>1.cadena, &nodoDeListaDeFunciones.principioParametros, &nodoDeListaDeFunciones.principioParametros);*/}
+					| TIPO_DATO ID {/*encolarParametro($<estructuraDeTipos>1.cadena, &nodoDeListaDeFunciones.principioParametros, &nodoDeListaDeFunciones.principioParametros);
+									agregarFuncion*/}
 					| error
 ;
 
@@ -298,8 +337,8 @@ sentenciaExpresion: listaDeExpresiones';'
 					| error
 ;
 
-invocacionFuncion: ID '(' listaDeExpresiones ')' {printf("\nSe invoca la funcion %s con parametros\n",$<cadena>1);}
-				   |ID '('')' {printf("\nSe invoca la funcion %s\n",$<cadena>1)}
+invocacionFuncion: ID '(' listaDeExpresiones ')' {printf("\nSe invoca la funcion %s con parametros\n",$<estructuraDeTipos>1.cadena);}
+				   |ID '('')' {printf("\nSe invoca la funcion %s\n",$<estructuraDeTipos>1.cadena)}
 				   | error
 ;
 
@@ -311,8 +350,8 @@ opAsignacionGeneral: '='
     				| opAsignacion
 ;
 
-declaraId: 	ID {agregarDeclaracion($<cadena>1,tipoDato);}
-			| ID '=' expresion {agregarDeclaracion($<cadena>1,tipoDato);}
+declaraId: 	ID {agregarDeclaracion($<estructuraDeTipos>1.tipo,tipoDato);}
+			| ID '=' expresion {agregarDeclaracion($<estructuraDeTipos>1.cadena,tipoDato);}
 			| error
 ;
 
@@ -320,14 +359,24 @@ listaDeExpresiones: expresion
 			 	    | expresion ',' listaDeExpresiones
 					| error 
 ;
+
 expresion:	 constante
-			| LITERALCADENA
-			| ID
+			| LITERALCADENA 
+			| ID {/*$<estructuraDeTipos>$.tipo = retornarTipoVariable(),$<estructuraDeTipos>$ = ret*/}  
 			| expresionDeAsignacion
-			| expresion '+' expresion
-			| expresion '-' expresion	
+			| expresion '+'expresion	{if($<estructuraDeTipos>1.tipo == $<estructuraDeTipos>3.tipo) {
+											switch($<estructuraDeTipos>$.tipo)
+											{
+											case 1:
+												$<estructuraDeTipos>$.entero = $<estructuraDeTipos>1.entero + $<estructuraDeTipos>3.entero
+											case 2:
+												$<estructuraDeTipos>$.real = $<estructuraDeTipos>1.real + $<estructuraDeTipos>3.real
+											case 3:
+												$<estructuraDeTipos>$.entero = $<estructuraDeTipos>1.caracter + $<estructuraDeTipos>3.caracter	 
+											} } }
+			| expresion '-' expresion	{}
 			| expresion '*' expresion
-			| expresion '/' expresion
+			| expresion '/' expresion	
 			| expresionUnaria
 			| expresion '^' expresion
 			| '(' expresion ')'
