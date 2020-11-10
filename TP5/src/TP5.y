@@ -8,19 +8,7 @@
 extern int lineno;
 extern FILE * yyin;
 
-char* tipoDato;
-char* idFuncion;
-char* tipoFuncion;
-
 //NODOS
-
-typedef struct tNodoVariable
-{
-	char* tipoDato;
-	char* identificador;
-	struct tNodoVariable* sgte;
-} tNodoVariable;
-
 
 typedef struct tNodoParametro
 {
@@ -28,135 +16,20 @@ typedef struct tNodoParametro
 	struct tNodoParametro* sgte;
 } tNodoParametro;
 
-
 typedef tNodoParametro* tColaParametro;
 
-
-typedef struct tNodoFuncion
-{
-	char* tipoDato;
+typedef struct tNodoTablaDeSimb
+{	
+	char* tipo;
 	char* identificador;
-	tColaParametro principioParametros;
-	tColaParametro finalParametros;
-	struct tNodoFuncion* sgte;
-} tNodoFuncion;
+	int validar = 0;
+	tColaParametro principioParametros = NULL;
+	tColaParametro finalParametros = NULL;
+	struct tNodoTablaDeSimb* sgte;
+} tNodoTablaDeSimb;
 
-tNodoFuncion* listaFunciones = NULL;
+tNodoTablaDeSimb* tablaDeSimb = NULL;
 
-tNodoVariable* listaVariables = NULL;
-
-//FUNCIONES
-
-tNodoVariable* encontrarEnListaVariable(char* identificador)
-{
-	tNodoVariable* pAct = listaVariables;
-	while(pAct && strcmp(pAct->identificador, identificador))
-	{
-		pAct = pAct->sgte;
-	}
-	return pAct;
-}
-tNodoFuncion* encontrarEnListaFuncion(char* identificador)
-{
-	tNodoFuncion* pAct = listaFunciones;
-	while(pAct && strcmp(pAct->identificador, identificador))
-	{
-		pAct = pAct->sgte;
-	}
-	return pAct;
-}
-/*
-int funcion(c,b,a)
-     A
-a -> b -> c
-
-     B
-a -> b -> c
-
-int funcion(c,b,a,d,e)
-
-NA
-P           F 
-c > b > a > d
-FIFO 
-*/
-
-int suma(int a; int b)
-
-
-void encolarParametro(char* tipo, tColaParametro colaParametro)
-{
-
-}
-
-int suma(int a, int b)
-
-
-void agregarFuncion(char* identificador, char* tipo, tColaParametro colaParametro)
-{
-	if(encontrarEnListaDeFunciones(identificador))
-	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", identificador);
-		return;
-	}
-	tNodoFuncion* p = (tNodoFuncion*) malloc(sizeof(tNodoFuncion));
-	p->tipoDato = strdup(tipo);
-	p->identificador = strdup(identificador);
-	p->parametros = strdup(colaParametro);
-
-	p->sgte = listaFunciones;
-	listaFunciones = p;
-}
-
-
-
-void agregarDeclaracion(char* identificador, char* tipo)
-{
-	if(encontrarEnListaVariable(identificador))
-	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", identificador);
-		return;
-	}
-	tNodoVariable* p = (tNodoVariable*) malloc(sizeof(tNodoVariable));
-	p->tipoDato = strdup(tipo);
-	p->identificador = strdup(identificador);
-
-	p->sgte = listaVariables;
-	listaVariables = p;
-}
-
-
-
-void imprimirListaVariables()
-{
-	printf("IDENTIFICADOR	TIPO\n\n");
-	
-	
-	while(listaVariables)
-	{
-		tNodoVariable* pActivo = listaVariables;
-		printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipoDato,"\n"));
-		free(pActivo);
-		listaVariables = listaVariables -> sgte;
-	}
-
-	free(listaVariables);
-}
-
-
-/*void validarTiposOperacionesBinarias(union primerParametro, union segundoParametro, char* operacion, union resultado)
-
-if(primerParametro.tipo == sengundoParametro.tipo) {
-	switch(operacion)
-	{
-		case SUMA:
-		return primerParametro.
-	} 
-}*/
-
-
-
-// BISON
 
 int flag_error=0;
 int contador=0;
@@ -170,35 +43,18 @@ void yyerror (char const *s);
 
 %}
 
-
-
 %union {
-	 struct yylval_struct {
-		char* cadena;          
-		int entero;                     
-		int tipo;
-		double real;
-		char caracter;
-	}estructuraDeTipos;
+	 char* cadena;
 }
 
-/*
-	tipo:
-		1 = int
-		2 = float
-		3 = char
-		5 = void
-*/
-
-
-%token <estructuraDeTipos> CCHAR
-%token <estructuraDeTipos> NUM
-%token <estructuraDeTipos> LITERALCADENA
-%token <estructuraDeTipos> ID
-%token <estructuraDeTipos> TIPO_DATO
-%token <estructuraDeTipos> REAL
-%token <estructuraDeTipos> TOKEN_VOID
-%token <estructuraDeTipos> error
+%token <cadena> CCHAR
+%token <cadena> NUM
+%token <cadena> LITERALCADENA
+%token <cadecna> ID
+%token <cadena> TIPO_DATO
+%token <cadena> REAL
+%token <cadena> TOKEN_VOID
+%token <cadena> error
 %token FOR
 %token IF
 %token WHILE
@@ -211,10 +67,10 @@ void yyerror (char const *s);
 %token BREAK
 %token CONTINUE
 
-%type <estructuraDeTipos> expresion
-%type <estructuraDeTipos> numero
-%type <estructuraDeTipos> constante
-%type <estructuraDeTipos> declaraId
+%type <cadena> expresion
+%type <cadena> numero
+%type <cadena> constante
+%type <cadena> declaraId
 
 %left OP_INCREMENTO OP_DECREMENTO
 %left '+' '-'
@@ -241,7 +97,7 @@ input:    /* vacio */
 numero: NUM
 		| REAL
 ;
-sentencia:  sentenciaDeclaracion
+sentencia:  {tNodoTablaDeSimb* nodo = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));} sentenciaDeclaracion {agregarATS(&nodo);}
 			| sentenciaCompuesta
 			| sentenciaExpresion
 			| sentenciaIteracion
@@ -256,8 +112,8 @@ sentenciaSalto: BREAK ';'
 				| CONTINUE ';'
 ;
 
-sentenciaDeclaracion: TIPO_DATO {tipoDato = strdup($<estructuraDeTipos>1.cadena);} parteFinalDeclaracion 
-					  | TOKEN_VOID {tipoFuncion = strdup($<estructuraDeTipos>1.cadena);} sentenciaFuncion
+sentenciaDeclaracion: TIPO_DATO {nodo->tipo = strdup($<cadena>1);} parteFinalDeclaracion 
+					  | TOKEN_VOID {nodo->tipo = strdup($<cadena>1);} sentenciaFuncion
 					  | error 
 ; 
 
@@ -293,16 +149,16 @@ expresionOpcional: expresion | /*vacio*/
 
 parteFinalDeclaracion: declaraId {}
 				| declaraId ',' listaIdentificadores';' {}
-				| sentenciaFuncion {tipoFuncion = strdup(tipoDato);} 
+				| sentenciaFuncion 
 				| error
 ;
-// new nodoDeListaDeFunciones, nodoDeListaDeFunciones.pParametros = new pColaParametros, new fColaParametros = pColaParametros
-sentenciaFuncion: ID /*{crear nodo de funcion, asignarle el tipo y el identificador}*/ '(' listaDeParametros ')' declaracionODefFuncion
+
+sentenciaFuncion: ID {nodo->validar = 1; nodo->identificador = strdup($<cadena>1)} '(' listaDeParametros ')' declaracionODefFuncion
 				  | error
 ;
 
-declaracionODefFuncion:  ';' {printf("\nSe declara la funcion %s de tipo %s \n",idFuncion,tipoFuncion);}
-						| sentenciaCompuesta  {printf("\nSe define la funcion %s de tipo %s\n",idFuncion,tipoFuncion);}
+declaracionODefFuncion:  ';'
+						| sentenciaCompuesta  
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
@@ -310,10 +166,10 @@ listaIdentificadores: declaraId ',' listaIdentificadores
 					| error
 ;
 
-listaDeParametros: /* vacio */
-					|TIPO_DATO ID ',' listaDeParametros {/*encolarParametro($<estructuraDeTipos>1.cadena, &nodoDeListaDeFunciones.principioParametros, &nodoDeListaDeFunciones.principioParametros);*/}
-					| TIPO_DATO ID {/*encolarParametro($<estructuraDeTipos>1.cadena, &nodoDeListaDeFunciones.principioParametros, &nodoDeListaDeFunciones.principioParametros);
-									agregarFuncion*/}
+listaDeParametros: /* vacio */ 
+					|TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo->principioParametros), &(nodo->finalParametros));} ',' listaDeParametros 
+					| TIPO_DATO ID {encolarParametro($<cadena>1, nodo->principioParametros, nodo->finalParametros)
+									agregarATS(&nodo)}
 					| error
 ;
 
@@ -337,10 +193,12 @@ sentenciaExpresion: listaDeExpresiones';'
 					| error
 ;
 
-invocacionFuncion: ID '(' listaDeExpresiones ')' {printf("\nSe invoca la funcion %s con parametros\n",$<estructuraDeTipos>1.cadena);}
-				   |ID '('')' {printf("\nSe invoca la funcion %s\n",$<estructuraDeTipos>1.cadena)}
+invocacionFuncion: ID { tNodoTablaDeSimb* nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarTipo(1,nodoActual)}
 				   | error
 ;
+
+segundaParteInvocacion: '('')' 
+						| {tColaParametro indice = nodoActual->principioDeCola;} '(' listaDeExpresiones ')' 
 
 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
 						| error
@@ -350,31 +208,29 @@ opAsignacionGeneral: '='
     				| opAsignacion
 ;
 
-declaraId: 	ID {agregarDeclaracion($<estructuraDeTipos>1.tipo,tipoDato);}
-			| ID '=' expresion {agregarDeclaracion($<estructuraDeTipos>1.cadena,tipoDato);}
+declaraId: 	ID {nodo->identificador = strdup($<cadena>1);}
+			| ID '=' expresion {nodo->identificador = strdup($<cadena>1;}
 			| error
 ;
 
-listaDeExpresiones: expresion
-			 	    | expresion ',' listaDeExpresiones
+listaDeExpresiones: expresion {if(indice->sgte == NULL) compararConParametro($<cadena>1, nodoActual->principioDeCola, nodoActual->finalDeCola, indice); else printf ("La invocacion no cumple con la cantidad de parametros de: %s", nodoActual->identificador)}
+			 	    | expresion {/* se compara con los parametros que hay en la cola de parametros*/} ',' listaDeExpresiones
 					| error 
 ;
 
 expresion:	 constante
 			| LITERALCADENA 
-			| ID {/*$<estructuraDeTipos>$.tipo = retornarTipoVariable(),$<estructuraDeTipos>$ = ret*/}  
+			| ID {tNodoTablaDeSimb* nodoActual2 = encontrarEnTablaDeSimb(ID); validarTipo(0,nodoActual2);}  
 			| expresionDeAsignacion
-			| expresion '+'expresion	{if($<estructuraDeTipos>1.tipo == $<estructuraDeTipos>3.tipo) {
-											switch($<estructuraDeTipos>$.tipo)
-											{
-											case 1:
-												$<estructuraDeTipos>$.entero = $<estructuraDeTipos>1.entero + $<estructuraDeTipos>3.entero
-											case 2:
-												$<estructuraDeTipos>$.real = $<estructuraDeTipos>1.real + $<estructuraDeTipos>3.real
-											case 3:
-												$<estructuraDeTipos>$.entero = $<estructuraDeTipos>1.caracter + $<estructuraDeTipos>3.caracter	 
-											} } }
-			| expresion '-' expresion	{}
+			| expresion '+' expresion	{if(strcmp($<cadena>1, $<cadena>3)){
+											/*error*/
+										}
+										else
+										{
+											strcpy($<cadena>$, $<cadena>1);
+										}
+										}
+			| expresion '-' expresion	
 			| expresion '*' expresion
 			| expresion '/' expresion	
 			| expresionUnaria
@@ -406,6 +262,79 @@ expresionUnaria: '-' expresion
 ;
 
 %%
+
+void validarTipo(int a,tNodoTablaDeSimb* nodoActual){
+	if(a != nodoActual->validar){
+		printf("El identificador no corresponde con su uso") //que rompa y no siga analizando
+	}
+}
+
+tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)
+{
+	tNodoTablaDeSimb* pAct = tablaDeSimb;
+	while(pAct && strcmp(pAct->identificador, identificador))
+	{
+		pAct = pAct->sgte;
+	}
+	return pAct;
+}
+
+
+void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal)
+{
+	tColaParametro p = (tColaParametro) malloc(sizeof(tColaParametro));
+	p->tipo = strdup(tipoParametro);
+	p->sgte = NULL;
+
+	if(*colaParametroInicio == NULL){
+		*colaParametroInicio = p;
+	}
+	(*colaParametroFinal)->sgte = p;
+	*colaParametroFinal = p;
+}
+
+void compararConParametro(char* tipoParametroEncontrado, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal, tColaParametro* indice)
+{
+	if(strcmp(indice->tipo, tipoParametroEncontrado) || indice == NULL){
+		printf("** ERROR: La invocacion no corresponde con la cant o tipo de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
+		return;
+	}
+	else {
+		indice = indice->sgte
+	}
+
+}
+
+
+void agregarATS(tNodoTablaDeSimb* nodo)
+{
+	if(encontrarEnTablaDeSimb(nodo->identificador))
+	{
+		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", nodo->identificador);
+		free(nodo);
+		return;
+	}
+	nodo->sgte = tablaDeSimb;
+	tablaDeSimb = nodo
+}
+
+
+void imprimirListaVariables()
+{
+	printf("IDENTIFICADOR	TIPO\n\n");
+	
+	
+	while(listaVariables)
+	{
+		tNodoVariable* pActivo = listaVariables;
+		printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipoDato,"\n"));
+		free(pActivo);
+		listaVariables = listaVariables -> sgte;
+	}
+
+	free(listaVariables);
+}
+
 
 void yyerror (char const *s)
 {
