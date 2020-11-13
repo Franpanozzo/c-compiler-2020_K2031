@@ -22,15 +22,25 @@ typedef struct tNodoTablaDeSimb
 {	
 	char* tipo;
 	char* identificador;
-	int validar = 0;
-	tColaParametro principioParametros = NULL;
-	tColaParametro finalParametros = NULL;
+	int validar;
+	tColaParametro principioParametros;
+	tColaParametro finalParametros;
 	struct tNodoTablaDeSimb* sgte;
 } tNodoTablaDeSimb;
+tNodoTablaDeSimb* inicializarTablaDeSimbolos();
+tNodoTablaDeSimb* encontrarEnTablaDeSimb(char*);
+void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice);
+void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal);
+void agregarATS(tNodoTablaDeSimb** nodo);
+void imprimirListaVariables();
+void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final);
 
 tNodoTablaDeSimb* tablaDeSimb = NULL;
-
-
+tNodoTablaDeSimb* nodo;
+tNodoTablaDeSimb* nodoActual;
+tNodoTablaDeSimb* nodoActual2;
+tColaParametro indice;
+void validarTipo(int a,tNodoTablaDeSimb* nodoActual);
 int flag_error=0;
 int contador=0;
 
@@ -97,7 +107,7 @@ input:    /* vacio */
 numero: NUM
 		| REAL
 ;
-sentencia:  {tNodoTablaDeSimb* nodo = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));} sentenciaDeclaracion {agregarATS(&nodo);}
+sentencia:  { nodo = inicializarTablaDeSimbolos();}sentenciaDeclaracion {agregarATS(&nodo);}
 			| sentenciaCompuesta
 			| sentenciaExpresion
 			| sentenciaIteracion
@@ -147,8 +157,8 @@ primeraExpresionFor: expresion | TIPO_DATO ID '=' expresion | /*vacio*/
 expresionOpcional: expresion | /*vacio*/
 ;
 
-parteFinalDeclaracion: declaraId {}
-				| declaraId ',' listaIdentificadores';' {}
+parteFinalDeclaracion: declaraId
+				| declaraId ',' listaIdentificadores';'
 				| sentenciaFuncion 
 				| error
 ;
@@ -168,8 +178,7 @@ listaIdentificadores: declaraId ',' listaIdentificadores
 
 listaDeParametros: /* vacio */ 
 					|TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo->principioParametros), &(nodo->finalParametros));} ',' listaDeParametros 
-					| TIPO_DATO ID {encolarParametro($<cadena>1, nodo->principioParametros, nodo->finalParametros)
-									agregarATS(&nodo)}
+					| TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo->principioParametros), &(nodo->finalParametros));}
 					| error
 ;
 
@@ -193,12 +202,14 @@ sentenciaExpresion: listaDeExpresiones';'
 					| error
 ;
 
-invocacionFuncion: ID { tNodoTablaDeSimb* nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarTipo(1,nodoActual)}
+invocacionFuncion: ID {nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarTipo(1,nodoActual);} segundaParteInvocacion
 				   | error
 ;
 
 segundaParteInvocacion: '('')' 
-						| {tColaParametro indice = nodoActual->principioDeCola;} '(' listaDeExpresiones ')' 
+						| {indice = nodoActual->principioParametros;} '(' listaDeExpresionesInvocacion ')' ';'
+
+
 
 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
 						| error
@@ -209,18 +220,23 @@ opAsignacionGeneral: '='
 ;
 
 declaraId: 	ID {nodo->identificador = strdup($<cadena>1);}
-			| ID '=' expresion {nodo->identificador = strdup($<cadena>1;}
+			| ID '=' expresion {nodo->identificador = strdup($<cadena>1);}
 			| error
 ;
 
-listaDeExpresiones: expresion {if(indice->sgte == NULL) compararConParametro($<cadena>1, nodoActual->principioDeCola, nodoActual->finalDeCola, indice); else printf ("La invocacion no cumple con la cantidad de parametros de: %s", nodoActual->identificador)}
-			 	    | expresion {/* se compara con los parametros que hay en la cola de parametros*/} ',' listaDeExpresiones
+listaDeExpresionesInvocacion: expresion {if(indice->sgte == NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;}
+			 	    | expresion {if(indice->sgte != NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;} ',' listaDeExpresionesInvocacion
+					| error 
+;
+
+listaDeExpresiones: expresion
+			 	    | expresion ',' listaDeExpresiones
 					| error 
 ;
 
 expresion:	 constante
 			| LITERALCADENA 
-			| ID {tNodoTablaDeSimb* nodoActual2 = encontrarEnTablaDeSimb(ID); validarTipo(0,nodoActual2);}  
+			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarTipo(0,nodoActual2);}
 			| expresionDeAsignacion
 			| expresion '+' expresion	{if(strcmp($<cadena>1, $<cadena>3)){
 											/*error*/
@@ -265,7 +281,7 @@ expresionUnaria: '-' expresion
 
 void validarTipo(int a,tNodoTablaDeSimb* nodoActual){
 	if(a != nodoActual->validar){
-		printf("El identificador no corresponde con su uso") //que rompa y no siga analizando
+		printf("El identificador no corresponde con su uso"); //que rompa y no siga analizando
 	}
 }
 
@@ -279,43 +295,46 @@ tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)
 	return pAct;
 }
 
-
 void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal)
 {
-	tColaParametro p = (tColaParametro) malloc(sizeof(tColaParametro));
+	tColaParametro p = (tColaParametro) malloc(sizeof(tNodoParametro));
 	p->tipo = strdup(tipoParametro);
 	p->sgte = NULL;
 
 	if(*colaParametroInicio == NULL){
 		*colaParametroInicio = p;
-	}
-	(*colaParametroFinal)->sgte = p;
-	*colaParametroFinal = p;
-}
-
-void compararConParametro(char* tipoParametroEncontrado, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal, tColaParametro* indice)
-{
-	if(strcmp(indice->tipo, tipoParametroEncontrado) || indice == NULL){
-		printf("** ERROR: La invocacion no corresponde con la cant o tipo de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
-		return;
+		*colaParametroFinal = p;
 	}
 	else {
-		indice = indice->sgte
+		(*colaParametroFinal)->sgte = p;
+		*colaParametroFinal = p;
+	}
+}
+
+void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
+{
+	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
+		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
+	}
+	else {
+		*indice = (*indice)->sgte;
 	}
 
 }
 
 
-void agregarATS(tNodoTablaDeSimb* nodo)
+void agregarATS(tNodoTablaDeSimb** nodo)
 {
-	if(encontrarEnTablaDeSimb(nodo->identificador))
+	if(encontrarEnTablaDeSimb((*nodo)->identificador))
 	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", nodo->identificador);
+		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", (*nodo)->identificador);
+		//llamar a yyerror();
+		free(*nodo);
 		free(nodo);
 		return;
 	}
-	nodo->sgte = tablaDeSimb;
-	tablaDeSimb = nodo
+	(*nodo)->sgte = tablaDeSimb;
+	tablaDeSimb = *nodo;
 }
 
 
@@ -323,18 +342,61 @@ void imprimirListaVariables()
 {
 	printf("IDENTIFICADOR	TIPO\n\n");
 	
-	
-	while(listaVariables)
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
 	{
-		tNodoVariable* pActivo = listaVariables;
-		printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipoDato,"\n"));
+		if(pActivo->validar == 0)
+			printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipo,"\n"));
+		tablaDeSimb = tablaDeSimb -> sgte;
 		free(pActivo);
-		listaVariables = listaVariables -> sgte;
 	}
-
-	free(listaVariables);
 }
 
+void imprimirListaFunciones()
+{
+	printf("IDENTIFICADOR	RETORNO	PARÁMETROS\n\n");
+	
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
+	{
+		if(pActivo->validar == 1)
+			printf(pActivo->identificador);printf("	");printf(pActivo->tipo); printf("	"); imprimirListaParametros(&(pActivo->principioParametros), &(pActivo->finalParametros)); printf("\n");
+		tablaDeSimb = tablaDeSimb -> sgte;
+		free(pActivo);
+	}
+}
+
+void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final)
+{
+	tNodoParametro* pAct = *principio;
+	while(*principio){
+		pAct = *principio;
+		printf((*principio)->tipo);
+
+		*principio = (*principio)->sgte;
+
+		if((*principio) == NULL)
+			*final = NULL;
+		else
+			printf(", ");
+
+		free(pAct);
+	}
+
+	free(principio);
+	free(final);
+}
+
+tNodoTablaDeSimb* inicializarTablaDeSimbolos()
+{
+	tNodoTablaDeSimb* nodo = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));
+
+	nodo->principioParametros = NULL;
+	nodo->finalParametros = NULL;
+	nodo->validar = 0;
+	
+	return nodo;
+}
 
 void yyerror (char const *s)
 {

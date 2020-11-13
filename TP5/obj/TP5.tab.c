@@ -68,7 +68,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "TP5.y"
+#line 1 "../src/TP5.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,7 +104,7 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal);
 void agregarATS(tNodoTablaDeSimb** nodo);
 void imprimirListaVariables();
-void imprimirListaParametros(tNodoParametro** principio, ttNodoParametro** final);
+void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final);
 
 tNodoTablaDeSimb* tablaDeSimb = NULL;
 tNodoTablaDeSimb* nodo;
@@ -192,7 +192,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 56 "TP5.y"
+#line 56 "../src/TP5.y"
 
 	 char* cadena;
 
@@ -1659,154 +1659,154 @@ yyreduce:
         case 7:
 
 /* Line 1455 of yacc.c  */
-#line 110 "TP5.y"
+#line 110 "../src/TP5.y"
     { nodo = inicializarTablaDeSimbolos();;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 110 "TP5.y"
+#line 110 "../src/TP5.y"
     {agregarATS(&nodo);;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 125 "TP5.y"
+#line 125 "../src/TP5.y"
     {nodo->tipo = strdup((yyvsp[(1) - (1)].cadena));;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 126 "TP5.y"
+#line 126 "../src/TP5.y"
     {nodo->tipo = strdup((yyvsp[(1) - (1)].cadena));;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 130 "TP5.y"
+#line 130 "../src/TP5.y"
     {printf("\nSe define una sentencia IF\n");;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 131 "TP5.y"
+#line 131 "../src/TP5.y"
     {printf("\nSe define una sentencia IF seguida de un ELSE\n");;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 132 "TP5.y"
+#line 132 "../src/TP5.y"
     {printf("\nSe define una sentencia de tipo SWITCH\n");;}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 147 "TP5.y"
+#line 147 "../src/TP5.y"
     {printf("\nSe define una sentencia FOR\n");;}
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 148 "TP5.y"
+#line 148 "../src/TP5.y"
     {printf("\nSe define una sentencia WHILE\n");;}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 149 "TP5.y"
+#line 149 "../src/TP5.y"
     {printf("\nSe define una sentencia DO WHILE\n");;}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 166 "TP5.y"
+#line 166 "../src/TP5.y"
     {nodo->validar = 1; nodo->identificador = strdup((yyvsp[(1) - (1)].cadena));}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 180 "TP5.y"
+#line 180 "../src/TP5.y"
     {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo->principioParametros), &(nodo->finalParametros));;}
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 181 "TP5.y"
+#line 181 "../src/TP5.y"
     {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo->principioParametros), &(nodo->finalParametros));;}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 205 "TP5.y"
+#line 205 "../src/TP5.y"
     {nodoActual = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarTipo(1,nodoActual);;}
     break;
 
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 210 "TP5.y"
+#line 210 "../src/TP5.y"
     {indice = nodoActual->principioParametros;;}
     break;
 
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 214 "TP5.y"
+#line 214 "../src/TP5.y"
     {printf("\n-->Expresion de asignacion.\n");;}
     break;
 
   case 82:
 
 /* Line 1455 of yacc.c  */
-#line 222 "TP5.y"
+#line 222 "../src/TP5.y"
     {nodo->identificador = strdup((yyvsp[(1) - (1)].cadena));;}
     break;
 
   case 83:
 
 /* Line 1455 of yacc.c  */
-#line 223 "TP5.y"
+#line 223 "../src/TP5.y"
     {nodo->identificador = strdup((yyvsp[(1) - (3)].cadena));;}
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 227 "TP5.y"
+#line 227 "../src/TP5.y"
     {if(indice->sgte == NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;;}
     break;
 
   case 86:
 
 /* Line 1455 of yacc.c  */
-#line 228 "TP5.y"
+#line 228 "../src/TP5.y"
     {if(indice->sgte != NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;;}
     break;
 
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 239 "TP5.y"
+#line 239 "../src/TP5.y"
     {nodoActual2 = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarTipo(0,nodoActual2);;}
     break;
 
   case 96:
 
 /* Line 1455 of yacc.c  */
-#line 241 "TP5.y"
+#line 241 "../src/TP5.y"
     {if(strcmp((yyvsp[(1) - (3)].cadena), (yyvsp[(3) - (3)].cadena))){
 											/*error*/
 										}
@@ -2032,7 +2032,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 280 "TP5.y"
+#line 280 "../src/TP5.y"
 
 
 void validarTipo(int a,tNodoTablaDeSimb* nodoActual){
@@ -2098,12 +2098,12 @@ void imprimirListaVariables()
 {
 	printf("IDENTIFICADOR	TIPO\n\n");
 	
-	tNodoTablaDeSimb* pActivo = tablaDeSim;
-	while(tablaDeSim)
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
 	{
-		if(pAct->validar == 0)
+		if(pActivo->validar == 0)
 			printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipo,"\n"));
-		tablaDeSim = tablaDeSim -> sgte;
+		tablaDeSimb = tablaDeSimb -> sgte;
 		free(pActivo);
 	}
 }
@@ -2112,12 +2112,12 @@ void imprimirListaFunciones()
 {
 	printf("IDENTIFICADOR	RETORNO	PARÁMETROS\n\n");
 	
-	tNodoTablaDeSimb* pActivo = tablaDeSim;
-	while(tablaDeSim)
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
 	{
-		if(pAct->validar == 1)
+		if(pActivo->validar == 1)
 			printf(pActivo->identificador);printf("	");printf(pActivo->tipo); printf("	"); imprimirListaParametros(&(pActivo->principioParametros), &(pActivo->finalParametros)); printf("\n");
-		tablaDeSim = tablaDeSim -> sgte;
+		tablaDeSimb = tablaDeSimb -> sgte;
 		free(pActivo);
 	}
 }
