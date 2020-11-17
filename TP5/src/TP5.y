@@ -40,7 +40,7 @@ tNodoTablaDeSimb* nodo;
 tNodoTablaDeSimb* nodoActual;
 tNodoTablaDeSimb* nodoActual2;
 tColaParametro indice;
-void validarTipo(int a,tNodoTablaDeSimb* nodoActual);
+void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identificador);
 int flag_error=0;
 int contador=0;
 
@@ -168,7 +168,7 @@ sentenciaFuncion: ID {nodo->validar = 1; nodo->identificador = strdup($<cadena>1
 ;
 
 declaracionODefFuncion:  ';'
-						| sentenciaCompuesta  
+						| sentenciaCompuesta ';'
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
@@ -202,14 +202,14 @@ sentenciaExpresion: listaDeExpresiones';'
 					| error
 ;
 
-invocacionFuncion: ID {nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarTipo(1,nodoActual);} segundaParteInvocacion
+invocacionFuncion: ID {nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarExistenciaYTipo(1,nodoActual,$<cadena>1);} segundaParteInvocacion
 				   | error
 ;
 
 segundaParteInvocacion: '('')' 
-						| {indice = nodoActual->principioParametros;} '(' listaDeExpresionesInvocacion ')' ';'
+						| {indice = nodoActual->principioParametros;} '(' listaDeExpresionesInvocacion ')'
 
-
+//int sumar(int a, int b){}; sumar(2,3);
 
 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
 						| error
@@ -236,7 +236,7 @@ listaDeExpresiones: expresion
 
 expresion:	 constante
 			| LITERALCADENA 
-			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarTipo(0,nodoActual2);}
+			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarExistenciaYTipo(0,nodoActual2, $<cadena>1);}
 			| expresionDeAsignacion
 			| expresion '+' expresion	{if(strcmp($<cadena>1, $<cadena>3)){
 											/*error*/
@@ -279,10 +279,17 @@ expresionUnaria: '-' expresion
 
 %%
 
-void validarTipo(int a,tNodoTablaDeSimb* nodoActual){
-	if(a != nodoActual->validar){
-		printf("El identificador no corresponde con su uso"); //que rompa y no siga analizando
+void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identificador){
+	if(nodoActual){
+		if(a != nodoActual->validar){
+			printf("El identificador no corresponde con su uso"); //que rompa y no siga analizando
+		}
 	}
+	else if(a)
+	{
+		printf("No se encuentra la función declarada con el indentificador %s\n", identificador);
+	}
+	else printf("No existe una variable declarada con ese identificador %s\n", identificador);
 }
 
 tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)

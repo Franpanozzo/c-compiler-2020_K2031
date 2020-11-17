@@ -48,7 +48,7 @@ Estado 140 conflictos: 14 reducción(ones)/reducción(ones)
 Estado 146 conflictos: 1 desplazamiento(s)/reducción(ones)
 Estado 157 conflictos: 1 desplazamiento(s)/reducción(ones)
 Estado 161 conflictos: 1 reducción(ones)/reducción(ones)
-Estado 176 conflictos: 1 desplazamiento(s)/reducción(ones)
+Estado 175 conflictos: 1 desplazamiento(s)/reducción(ones)
 
 
 Gramática
@@ -123,7 +123,7 @@ Gramática
    48                 | error
 
    49 declaracionODefFuncion: ';'
-   50                       | sentenciaCompuesta
+   50                       | sentenciaCompuesta ';'
 
    51 listaIdentificadores: declaraId ',' listaIdentificadores
    52                     | declaraId
@@ -162,7 +162,7 @@ Gramática
 
    75 $@7: /* vacío */
 
-   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion ')' ';'
+   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion ')'
 
    77 expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones
    78                      | error
@@ -231,7 +231,7 @@ $end (0) 0
 '-' (45) 96 118
 '/' (47) 98
 ':' (58) 27 28
-';' (59) 15 16 17 30 33 35 43 49 69 76
+';' (59) 15 16 17 30 33 35 43 49 50 69
 '<' (60) 108
 '=' (61) 38 79 82
 '>' (62) 109
@@ -2497,7 +2497,7 @@ estado 92
 
 estado 93
 
-   76 segundaParteInvocacion: $@7 . '(' listaDeExpresionesInvocacion ')' ';'
+   76 segundaParteInvocacion: $@7 . '(' listaDeExpresionesInvocacion ')'
 
     '('  desplazar e ir al estado 124
 
@@ -3214,7 +3214,7 @@ estado 123
 
 estado 124
 
-   76 segundaParteInvocacion: $@7 '(' . listaDeExpresionesInvocacion ')' ';'
+   76 segundaParteInvocacion: $@7 '(' . listaDeExpresionesInvocacion ')'
 
     error          desplazar e ir al estado 140
     CCHAR          desplazar e ir al estado 4
@@ -3679,7 +3679,7 @@ estado 140
 
 estado 141
 
-   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion . ')' ';'
+   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion . ')'
 
     ')'  desplazar e ir al estado 153
 
@@ -3889,16 +3889,16 @@ estado 152
 
 estado 153
 
-   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion ')' . ';'
+   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion ')' .
 
-    ';'  desplazar e ir al estado 165
+    $default  reduce usando la regla 76 (segundaParteInvocacion)
 
 
 estado 154
 
    86 listaDeExpresionesInvocacion: expresion $@8 . ',' listaDeExpresionesInvocacion
 
-    ','  desplazar e ir al estado 166
+    ','  desplazar e ir al estado 165
 
 
 estado 155
@@ -3952,7 +3952,7 @@ estado 156
 
     numero                 ir al estado 25
     constante              ir al estado 32
-    expresionOpcional      ir al estado 167
+    expresionOpcional      ir al estado 166
     invocacionFuncion      ir al estado 36
     expresionDeAsignacion  ir al estado 37
     expresion              ir al estado 145
@@ -3995,7 +3995,7 @@ estado 157
     TOKEN_VOID  reduce usando la regla 6 ($@1)
 
     numero                 ir al estado 25
-    sentencia              ir al estado 168
+    sentencia              ir al estado 167
     $@1                    ir al estado 27
     sentenciaSalto         ir al estado 28
     sentenciaSeleccion     ir al estado 29
@@ -4020,7 +4020,7 @@ estado 158
 
    35 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' . ';'
 
-    ';'  desplazar e ir al estado 169
+    ';'  desplazar e ir al estado 168
 
 
 estado 159
@@ -4057,12 +4057,12 @@ estado 160
 
    47 sentenciaFuncion: ID $@4 '(' . listaDeParametros ')' declaracionODefFuncion
 
-    error      desplazar e ir al estado 170
-    TIPO_DATO  desplazar e ir al estado 171
+    error      desplazar e ir al estado 169
+    TIPO_DATO  desplazar e ir al estado 170
 
     ')'  reduce usando la regla 54 (listaDeParametros)
 
-    listaDeParametros  ir al estado 172
+    listaDeParametros  ir al estado 171
 
 
 estado 161
@@ -4090,7 +4090,7 @@ estado 163
 
    43 parteFinalDeclaracion: declaraId ',' listaIdentificadores . ';'
 
-    ';'  desplazar e ir al estado 173
+    ';'  desplazar e ir al estado 172
 
 
 estado 164
@@ -4098,19 +4098,12 @@ estado 164
    51 listaIdentificadores: declaraId . ',' listaIdentificadores
    52                     | declaraId .
 
-    ','  desplazar e ir al estado 174
+    ','  desplazar e ir al estado 173
 
     $default  reduce usando la regla 52 (listaIdentificadores)
 
 
 estado 165
-
-   76 segundaParteInvocacion: $@7 '(' listaDeExpresionesInvocacion ')' ';' .
-
-    $default  reduce usando la regla 76 (segundaParteInvocacion)
-
-
-estado 166
 
    86 listaDeExpresionesInvocacion: expresion $@8 ',' . listaDeExpresionesInvocacion
 
@@ -4129,7 +4122,7 @@ estado 166
     constante                     ir al estado 32
     invocacionFuncion             ir al estado 36
     expresionDeAsignacion         ir al estado 37
-    listaDeExpresionesInvocacion  ir al estado 175
+    listaDeExpresionesInvocacion  ir al estado 174
     expresion                     ir al estado 142
     opPostDecremento              ir al estado 40
     opPreDecremento               ir al estado 41
@@ -4138,75 +4131,75 @@ estado 166
     expresionUnaria               ir al estado 44
 
 
-estado 167
+estado 166
 
    33 sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional . ')' sentencia
 
-    ')'  desplazar e ir al estado 176
+    ')'  desplazar e ir al estado 175
 
 
-estado 168
+estado 167
 
    24 sentenciaSeleccion: IF '(' expresion ')' sentencia ELSE sentencia .
 
     $default  reduce usando la regla 24 (sentenciaSeleccion)
 
 
-estado 169
+estado 168
 
    35 sentenciaIteracion: DO sentencia WHILE '(' expresion ')' ';' .
 
     $default  reduce usando la regla 35 (sentenciaIteracion)
 
 
-estado 170
+estado 169
 
    58 listaDeParametros: error .
 
     $default  reduce usando la regla 58 (listaDeParametros)
 
 
-estado 171
+estado 170
 
    56 listaDeParametros: TIPO_DATO . ID $@5 ',' listaDeParametros
    57                  | TIPO_DATO . ID
 
-    ID  desplazar e ir al estado 177
+    ID  desplazar e ir al estado 176
 
 
-estado 172
+estado 171
 
    47 sentenciaFuncion: ID $@4 '(' listaDeParametros . ')' declaracionODefFuncion
 
-    ')'  desplazar e ir al estado 178
+    ')'  desplazar e ir al estado 177
 
 
-estado 173
+estado 172
 
    43 parteFinalDeclaracion: declaraId ',' listaIdentificadores ';' .
 
     $default  reduce usando la regla 43 (parteFinalDeclaracion)
 
 
-estado 174
+estado 173
 
    51 listaIdentificadores: declaraId ',' . listaIdentificadores
 
     error  desplazar e ir al estado 161
     ID     desplazar e ir al estado 162
 
-    listaIdentificadores  ir al estado 179
+    listaIdentificadores  ir al estado 178
     declaraId             ir al estado 164
 
 
-estado 175
+estado 174
 
    86 listaDeExpresionesInvocacion: expresion $@8 ',' listaDeExpresionesInvocacion .
 
     $default  reduce usando la regla 86 (listaDeExpresionesInvocacion)
 
 
-estado 176
+estado 175
 
    33 sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' . sentencia
 
@@ -4238,7 +4231,7 @@ estado 176
     TOKEN_VOID  reduce usando la regla 6 ($@1)
 
     numero                 ir al estado 25
-    sentencia              ir al estado 180
+    sentencia              ir al estado 179
     $@1                    ir al estado 27
     sentenciaSalto         ir al estado 28
     sentenciaSeleccion     ir al estado 29
@@ -4259,7 +4252,7 @@ estado 176
     expresionUnaria        ir al estado 44
 
 
-estado 177
+estado 176
 
    56 listaDeParametros: TIPO_DATO ID . $@5 ',' listaDeParametros
    57                  | TIPO_DATO ID .
@@ -4267,80 +4260,87 @@ estado 177
     ')'       reduce usando la regla 57 (listaDeParametros)
     $default  reduce usando la regla 55 ($@5)
 
-    $@5  ir al estado 181
+    $@5  ir al estado 180
 
 
-estado 178
+estado 177
 
    47 sentenciaFuncion: ID $@4 '(' listaDeParametros ')' . declaracionODefFuncion
 
-    error  desplazar e ir al estado 182
-    ';'    desplazar e ir al estado 183
+    error  desplazar e ir al estado 181
+    ';'    desplazar e ir al estado 182
     '{'    desplazar e ir al estado 24
 
-    declaracionODefFuncion  ir al estado 184
-    sentenciaCompuesta      ir al estado 185
+    declaracionODefFuncion  ir al estado 183
+    sentenciaCompuesta      ir al estado 184
 
 
-estado 179
+estado 178
 
    51 listaIdentificadores: declaraId ',' listaIdentificadores .
 
     $default  reduce usando la regla 51 (listaIdentificadores)
 
 
-estado 180
+estado 179
 
    33 sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' sentencia .
 
     $default  reduce usando la regla 33 (sentenciaIteracion)
 
 
-estado 181
+estado 180
 
    56 listaDeParametros: TIPO_DATO ID $@5 . ',' listaDeParametros
 
-    ','  desplazar e ir al estado 186
+    ','  desplazar e ir al estado 185
 
 
-estado 182
+estado 181
 
    60 sentenciaCompuesta: error .
 
     $default  reduce usando la regla 60 (sentenciaCompuesta)
 
 
-estado 183
+estado 182
 
    49 declaracionODefFuncion: ';' .
 
     $default  reduce usando la regla 49 (declaracionODefFuncion)
 
 
-estado 184
+estado 183
 
    47 sentenciaFuncion: ID $@4 '(' listaDeParametros ')' declaracionODefFuncion .
 
     $default  reduce usando la regla 47 (sentenciaFuncion)
 
 
+estado 184
+
+   50 declaracionODefFuncion: sentenciaCompuesta . ';'
+
+    ';'  desplazar e ir al estado 186
+
+
 estado 185
-
-   50 declaracionODefFuncion: sentenciaCompuesta .
-
-    $default  reduce usando la regla 50 (declaracionODefFuncion)
-
-
-estado 186
 
    56 listaDeParametros: TIPO_DATO ID $@5 ',' . listaDeParametros
 
-    error      desplazar e ir al estado 170
-    TIPO_DATO  desplazar e ir al estado 171
+    error      desplazar e ir al estado 169
+    TIPO_DATO  desplazar e ir al estado 170
 
     ')'  reduce usando la regla 54 (listaDeParametros)
 
     listaDeParametros  ir al estado 187
+
+
+estado 186
+
+   50 declaracionODefFuncion: sentenciaCompuesta ';' .
+
+    $default  reduce usando la regla 50 (declaracionODefFuncion)
 
 
 estado 187

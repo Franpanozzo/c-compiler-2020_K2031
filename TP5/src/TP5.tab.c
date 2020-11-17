@@ -104,14 +104,14 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal);
 void agregarATS(tNodoTablaDeSimb** nodo);
 void imprimirListaVariables();
-void imprimirListaParametros(tNodoParametro** principio, ttNodoParametro** final);
+void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final);
 
 tNodoTablaDeSimb* tablaDeSimb = NULL;
 tNodoTablaDeSimb* nodo;
 tNodoTablaDeSimb* nodoActual;
 tNodoTablaDeSimb* nodoActual2;
 tColaParametro indice;
-void validarTipo(int a,tNodoTablaDeSimb* nodoActual);
+void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identificador);
 int flag_error=0;
 int contador=0;
 
@@ -1751,7 +1751,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 205 "TP5.y"
-    {nodoActual = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarTipo(1,nodoActual);;}
+    {nodoActual = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarExistenciaYTipo(1,nodoActual,(yyvsp[(1) - (1)].cadena));;}
     break;
 
   case 76:
@@ -1800,7 +1800,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 239 "TP5.y"
-    {nodoActual2 = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarTipo(0,nodoActual2);;}
+    {nodoActual2 = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarExistenciaYTipo(0,nodoActual2, (yyvsp[(1) - (1)].cadena));;}
     break;
 
   case 96:
@@ -2035,10 +2035,17 @@ yyreturn:
 #line 280 "TP5.y"
 
 
-void validarTipo(int a,tNodoTablaDeSimb* nodoActual){
-	if(a != nodoActual->validar){
-		printf("El identificador no corresponde con su uso"); //que rompa y no siga analizando
+void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identificador){
+	if(nodoActual){
+		if(a != nodoActual->validar){
+			printf("El identificador no corresponde con su uso"); //que rompa y no siga analizando
+		}
 	}
+	else if(a)
+	{
+		printf("No se encuentra la función declarada con el indentificador %s\n", identificador);
+	}
+	else printf("No existe una variable declarada con ese identificador %s\n", identificador);
 }
 
 tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)
@@ -2098,12 +2105,12 @@ void imprimirListaVariables()
 {
 	printf("IDENTIFICADOR	TIPO\n\n");
 	
-	tNodoTablaDeSimb* pActivo = tablaDeSim;
-	while(tablaDeSim)
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
 	{
-		if(pAct->validar == 0)
+		if(pActivo->validar == 0)
 			printf(pActivo->identificador);printf("	");printf(strcat(pActivo->tipo,"\n"));
-		tablaDeSim = tablaDeSim -> sgte;
+		tablaDeSimb = tablaDeSimb -> sgte;
 		free(pActivo);
 	}
 }
@@ -2112,12 +2119,12 @@ void imprimirListaFunciones()
 {
 	printf("IDENTIFICADOR	RETORNO	PARÁMETROS\n\n");
 	
-	tNodoTablaDeSimb* pActivo = tablaDeSim;
-	while(tablaDeSim)
+	tNodoTablaDeSimb* pActivo = tablaDeSimb;
+	while(tablaDeSimb)
 	{
-		if(pAct->validar == 1)
+		if(pActivo->validar == 1)
 			printf(pActivo->identificador);printf("	");printf(pActivo->tipo); printf("	"); imprimirListaParametros(&(pActivo->principioParametros), &(pActivo->finalParametros)); printf("\n");
-		tablaDeSim = tablaDeSim -> sgte;
+		tablaDeSimb = tablaDeSimb -> sgte;
 		free(pActivo);
 	}
 }
