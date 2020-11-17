@@ -100,14 +100,17 @@ void yyerror (char const *s);
 
 // Cambiar el axioma por una lista de sentencias
 input:    /* vacio */
-        | input sentencia
+        | input inicializarNodo
 		| input error 
 ;
 
-numero: NUM
-		| REAL
+numero: NUM {$<cadena>$ = strdup($<cadena>1);}
+		| REAL {$<cadena>$ = strdup($<cadena>1);}
 ;
-sentencia:  { nodo = inicializarTablaDeSimbolos();}sentenciaDeclaracion {agregarATS(&nodo);}
+
+inicializarNodo: {nodo = inicializarTablaDeSimbolos();} sentencia
+
+sentencia:  sentenciaDeclaracion{agregarATS(&nodo);}
 			| sentenciaCompuesta
 			| sentenciaExpresion
 			| sentenciaIteracion
@@ -141,7 +144,8 @@ sentenciaEtiquetada: CASE constante ':' sentencia
 sentenciaRetorno: RETURN expresion ';'
 ;
 
-constante: numero | CCHAR		
+constante: numero {$<cadena>$ = strdup($<cadena>1);}
+		   | CCHAR	{$<cadena>$ = strdup($<cadena>1);}
 ;
 
 sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' sentencia {printf("\nSe define una sentencia FOR\n");}
@@ -151,7 +155,7 @@ sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expres
 ;
 
 
-primeraExpresionFor: expresion | TIPO_DATO ID '=' expresion | /*vacio*/
+primeraExpresionFor: expresion | TIPO_DATO ID {nodo->identificador = strdup($<cadena>2); agregarATS(&nodo);} '=' expresion | /*vacio*/
 ;
 
 expresionOpcional: expresion | /*vacio*/
@@ -168,7 +172,7 @@ sentenciaFuncion: ID {nodo->validar = 1; nodo->identificador = strdup($<cadena>1
 ;
 
 declaracionODefFuncion:  ';'
-						| sentenciaCompuesta ';'
+						| sentenciaCompuesta
 ;
 
 listaIdentificadores: declaraId ',' listaIdentificadores
@@ -186,8 +190,8 @@ sentenciaCompuesta: '{'listaDeSentencias'}'
 					| error
 ;
 
-listaDeSentencias: sentencia listaDeSentencias 
-					| sentencia 
+listaDeSentencias: sentencia listaDeSentencias
+					| sentencia
 					| /*vacio*/
 					| error
 ;
@@ -206,8 +210,10 @@ invocacionFuncion: ID {nodoActual = encontrarEnTablaDeSimb($<cadena>1); validarE
 				   | error
 ;
 
-segundaParteInvocacion: '('')' 
-						| {indice = nodoActual->principioParametros;} '(' listaDeExpresionesInvocacion ')'
+segundaParteInvocacion: {if(nodoActual) indice = nodoActual->principioParametros;} '(' conOSinParametros ')'
+
+conOSinParametros: listaDeExpresionesInvocacion
+				   | /* blank */
 
 //int sumar(int a, int b){}; sumar(2,3);
 
@@ -224,8 +230,8 @@ declaraId: 	ID {nodo->identificador = strdup($<cadena>1);}
 			| error
 ;
 
-listaDeExpresionesInvocacion: expresion {if(indice->sgte == NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;}
-			 	    | expresion {if(indice->sgte != NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;} ',' listaDeExpresionesInvocacion
+listaDeExpresionesInvocacion: expresion {if(nodoActual && indice){if(indice->sgte == NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;}}
+			 	    | expresion {if(nodoActual && indice){if(indice->sgte != NULL) compararConParametro($<cadena>1, &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;}} ',' listaDeExpresionesInvocacion
 					| error 
 ;
 
@@ -234,8 +240,8 @@ listaDeExpresiones: expresion
 					| error 
 ;
 
-expresion:	 constante
-			| LITERALCADENA 
+expresion:	 constante {$<cadena>$ = strdup($<cadena>1);}
+			| LITERALCADENA {$<cadena>$ = strdup($<cadena>1);}
 			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarExistenciaYTipo(0,nodoActual2, $<cadena>1);}
 			| expresionDeAsignacion
 			| expresion '+' expresion	{if(strcmp($<cadena>1, $<cadena>3)){
@@ -287,16 +293,19 @@ void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identifica
 	}
 	else if(a)
 	{
-		printf("No se encuentra la función declarada con el indentificador %s\n", identificador);
+		printf("No se encuentra la funcion declarada con el indentificador %s\n", identificador);
 	}
 	else printf("No existe una variable declarada con ese identificador %s\n", identificador);
 }
 
 tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)
 {
+	printf("SE INICIA LA BUSQUEDA...\n");
 	tNodoTablaDeSimb* pAct = tablaDeSimb;
+
 	while(pAct && strcmp(pAct->identificador, identificador))
 	{
+		printf("Leyendo TS: %s\n", pAct->identificador);
 		pAct = pAct->sgte;
 	}
 	return pAct;
@@ -323,10 +332,7 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
 		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
 	}
-	else {
-		*indice = (*indice)->sgte;
-	}
-
+	*indice = (*indice)->sgte;
 }
 
 
@@ -361,7 +367,7 @@ void imprimirListaVariables()
 
 void imprimirListaFunciones()
 {
-	printf("IDENTIFICADOR	RETORNO	PARÁMETROS\n\n");
+	printf("IDENTIFICADOR	RETORNO	PARAMETROS\n\n");
 	
 	tNodoTablaDeSimb* pActivo = tablaDeSimb;
 	while(tablaDeSimb)
@@ -420,4 +426,5 @@ int main ()
   yyparse ();
 
   imprimirListaVariables();
+  imprimirListaFunciones();
 }

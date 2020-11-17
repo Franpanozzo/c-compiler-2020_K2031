@@ -264,13 +264,9 @@ static void yy_flex_free YY_PROTO(( void * ));
 
 #define yywrap() 1
 #define YY_SKIP_YYWRAP
-
-#define FLEX_DEBUG
 typedef unsigned char YY_CHAR;
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
 typedef int yy_state_type;
-
-#define FLEX_DEBUG
 extern char *yytext;
 #define yytext_ptr yytext
 
@@ -453,17 +449,6 @@ static yyconst short int yy_chk[251] =
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
-extern int yy_flex_debug;
-int yy_flex_debug = 1;
-
-static yyconst short int yy_rule_linenum[37] =
-    {   0,
-       28,   29,   30,   31,   32,   33,   34,   35,   36,   37,
-       38,   39,   40,   41,   42,   43,   44,   45,   46,   47,
-       48,   49,   50,   51,   52,   53,   54,   55,   56,   57,
-       58,   59,   60,   61,   62,   63
-    } ;
-
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which flex missed.
  */
@@ -483,7 +468,7 @@ char *yytext;
 
 int lineno = 1;
 
-#line 487 "lex.yy.c"
+#line 472 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -638,7 +623,7 @@ YY_DECL
 
 
 
-#line 642 "lex.yy.c"
+#line 627 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -711,21 +696,6 @@ yy_find_action:
 
 do_action:	/* This label is used only to access EOF actions. */
 
-		if ( yy_flex_debug )
-			{
-			if ( yy_act == 0 )
-				fprintf( stderr, "--scanner backing up\n" );
-			else if ( yy_act < 37 )
-				fprintf( stderr, "--accepting rule at line %d (\"%s\")\n",
-				         yy_rule_linenum[yy_act], yytext );
-			else if ( yy_act == 37 )
-				fprintf( stderr, "--accepting default rule (\"%s\")\n",
-				         yytext );
-			else if ( yy_act == 38 )
-				fprintf( stderr, "--(end of buffer or a NUL)\n" );
-			else
-				fprintf( stderr, "--EOF (start condition %d)\n", YY_START );
-			}
 
 		switch ( yy_act )
 	{ /* beginning of action switch */
@@ -739,22 +709,22 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 28 "TP5.l"
-{yylval.cadena = "entero"; return NUM;}
+{yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 29 "TP5.l"
-{yylval.cadena = "entero"; return NUM;} 
+{yylval.cadena = "int"; return NUM;} 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 30 "TP5.l"
-{yylval.cadena = "entero"; return NUM;}
+{yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 31 "TP5.l"
-{yylval.cadena = "real"; return REAL;}
+{yylval.cadena = "float"; return REAL;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -764,7 +734,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 33 "TP5.l"
-{yylval.cadena = "caracter"; return CCHAR;}
+{yylval.cadena = "char"; return CCHAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -902,7 +872,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 60 "TP5.l"
-{yylval.cadena = strdup(yytext);return LITERALCADENA;}
+{yylval.cadena = "char*";return LITERALCADENA;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
@@ -924,7 +894,7 @@ YY_RULE_SETUP
 #line 65 "TP5.l"
 ECHO;
 	YY_BREAK
-#line 928 "lex.yy.c"
+#line 898 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

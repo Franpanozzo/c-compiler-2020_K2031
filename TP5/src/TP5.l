@@ -25,12 +25,12 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 %%
 
 
-[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {yylval.cadena = "entero"; return NUM;}
-0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {yylval.cadena = "entero"; return NUM;} 
-0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {yylval.cadena = "entero"; return NUM;}
-{CONSTANTE_REAL} {yylval.cadena = "real"; return REAL;}
+[1-9]{DIGITO_DECIMAL}*{SUFIJO_ENTERO}? {yylval.cadena = "int"; return NUM;}
+0{DIGITO_OCTAL}*{SUFIJO_ENTERO}? {yylval.cadena = "int"; return NUM;} 
+0[xX][0-9a-fA-F]+{SUFIJO_ENTERO}? {yylval.cadena = "int"; return NUM;}
+{CONSTANTE_REAL} {yylval.cadena = "float"; return REAL;}
 {PALABRA_RESERVADA_TIPO} {yylval.cadena = strdup(yytext); return TIPO_DATO;}
-\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {yylval.cadena = "caracter"; return CCHAR;}
+\'({CARACTER_C}|{SECUENCIA_DE_ESCAPE})\' {yylval.cadena = "char"; return CCHAR;}
 "if" {return IF;}
 "else" {return ELSE;}
 "for" {return FOR;}
@@ -57,7 +57,7 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "/=" {return DIVIDIDOIGUAL;}
 [a-zA-Z_][a-zA-Z0-9_]* {yylval.cadena = strdup(yytext); return ID;}
 [+-/*=:()^{};&<>] {return yytext[0];}
-\"([^\"]*)\" {yylval.cadena = strdup(yytext);return LITERALCADENA;}
+\"([^\"]*)\" {yylval.cadena = "char*";return LITERALCADENA;}
 "/*"([^*]|\*+[^/])*\*+\/ {}
 \n {lineno++;}
 [^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n",yytext);}

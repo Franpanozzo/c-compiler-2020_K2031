@@ -739,22 +739,22 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 28 "../src/TP5.l"
-{yylval.cadena = "entero"; return NUM;}
+{yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 29 "../src/TP5.l"
-{yylval.cadena = "entero"; return NUM;} 
+{yylval.cadena = "int"; return NUM;} 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 30 "../src/TP5.l"
-{yylval.cadena = "entero"; return NUM;}
+{yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 31 "../src/TP5.l"
-{yylval.cadena = "real"; return REAL;}
+{yylval.cadena = "float"; return REAL;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -764,7 +764,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 33 "../src/TP5.l"
-{yylval.cadena = "caracter"; return CCHAR;}
+{yylval.cadena = "char"; return CCHAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -902,7 +902,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 60 "../src/TP5.l"
-{yylval.cadena = strdup(yytext);return LITERALCADENA;}
+{yylval.cadena = "char*";return LITERALCADENA;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP

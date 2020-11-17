@@ -1,4 +1,19 @@
 int a = 3, b= 2, c= 0;
-int sumar(int a, int b, int c);
+char d = '3';
+char* cadena;
+int hola(char c)
+{
+    for(int i = 0;i<7;i++){};
+}
 
-sumar(a,b);
+void miFuncion(char b,int d, char* cad){}
+
+miFuncion(d,a,cadena);
+
+int sumar(int a, int b, int c){
+    return a+b+c;
+}
+cadena = "";
+sumar(a,b,12);
+void noHaceNada(){}
+@
