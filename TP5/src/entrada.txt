@@ -1,11 +1,13 @@
 char b = 'a';
 int d = 3;
-char* a = "caca";
+//char* a = "caca";
 
 void int = ;
 
+b + d;
+
 void miFuncion(char b,int d, char* cad){}
 
-miFuncion(b,d,a);
+miFuncion(b,d);
 
 int a = 4;

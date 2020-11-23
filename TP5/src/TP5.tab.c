@@ -1840,14 +1840,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 240 "TP5.y"
-    {if(nodoActual && indice){if(indice->sgte == NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;};}
+    {if(nodoActual && indice){if(indice->sgte == NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else{printf ("La invocacion no cumple con la cantidad de parametros de %s\n", nodoActual->identificador);indice = NULL;}}else printf("ENTRO POR ACA\n");;}
     break;
 
   case 92:
 
 /* Line 1455 of yacc.c  */
 #line 241 "TP5.y"
-    {if(nodoActual && indice){if(indice->sgte != NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else printf ("La invocacion no cumple con la cantidad de parametros de %s", nodoActual->identificador);indice = NULL;};}
+    {if(nodoActual && indice){if(indice->sgte != NULL) compararConParametro((yyvsp[(1) - (1)].cadena), &indice); else{printf("La invocacion no cumple con la cantidad de parametros de %s\n", nodoActual->identificador);indice = NULL;}};}
     break;
 
   case 98:
@@ -1868,7 +1868,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 252 "TP5.y"
-    {nodoActual2 = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarExistenciaYTipo(0,nodoActual2, (yyvsp[(1) - (1)].cadena));;}
+    {nodoActual2 = encontrarEnTablaDeSimb((yyvsp[(1) - (1)].cadena)); validarExistenciaYTipo(0,nodoActual2, (yyvsp[(1) - (1)].cadena)); if(nodoActual2) (yyval.cadena) = nodoActual2->tipo;;}
     break;
 
   case 102:
@@ -1876,7 +1876,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 254 "TP5.y"
     {if(strcmp((yyvsp[(1) - (3)].cadena), (yyvsp[(3) - (3)].cadena))){
-											/*error*/
+											printf("(Linea %i) Error de tipos - no se puede hacer la suma entre %s y %s\n", lineno, (yyvsp[(1) - (3)].cadena), (yyvsp[(3) - (3)].cadena));
 										}
 										else
 										{
@@ -2148,11 +2148,14 @@ void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, 
 
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 {
-	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
-		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
+	if(tipoParametroEncontrado)
+	{
+		if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
+			printf("TS: %s - PARAMETRO LEIDO: %s\n", (*indice)->tipo, tipoParametroEncontrado);
+			printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion ** \n\n");
+		}
 	}
-	printf("El parametro %s coincide, esta bien :)\n",tipoParametroEncontrado);
-	*indice = (*indice)->sgte;
+	*indice = (*indice)->sgte;	
 }
 
 
@@ -2163,7 +2166,7 @@ void agregarATS(tNodoTablaDeSimb** nodo)
 
 	if(encontrarEnTablaDeSimb(nodoCopia->identificador))
 	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", encontrarEnTablaDeSimb(nodoCopia->identificador));
+		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", nodoCopia->identificador);
 		//llamar a yyerror();
 		free(*nodo);
 		free(nodo);
@@ -2177,7 +2180,9 @@ void agregarATS(tNodoTablaDeSimb** nodo)
 
 void imprimirListaVariables()
 {
-	printf("IDENTIFICADOR	TIPO\n\n");
+	printf("\n---------------------------\n");
+	printf("IDENTIFICADOR	TIPO");
+	printf("\n---------------------------\n");
 	
 	tNodoTablaDeSimb* pActivo = tablaDeSimb;
 	while(pActivo)
@@ -2195,7 +2200,9 @@ void imprimirListaVariables()
 
 void imprimirListaFunciones()
 {
-	printf("IDENTIFICADOR	RETORNO	  PARAMETROS\n\n");
+	printf("\n-------------------------------------------\n");
+	printf("IDENTIFICADOR	RETORNO	  PARAMETROS");
+	printf("\n-------------------------------------------\n");
 	
 	tNodoTablaDeSimb* pActivo = tablaDeSimb;
 	while(pActivo)
@@ -2229,18 +2236,6 @@ void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final)
 		pAct = *principio;
 	}
 }
-
-/*tNodoTablaDeSimb* inicializarNodo()
-{
-	tNodoTablaDeSimb* nodo = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));
-
-	nodo->principioParametros = NULL;
-	nodo->finalParametros = NULL;
-	nodo->sgte = NULL;
-	nodo->validar = 0;
-	
-	return nodo;
-}*/
 
 void inicializarNodoConTipo(char* tipo, tNodoTablaDeSimb** nodo)
 {

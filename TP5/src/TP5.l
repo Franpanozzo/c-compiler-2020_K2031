@@ -61,5 +61,4 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "/*"([^*]|\*+[^/])*\*+\/ {}
 \n {lineno++;}
 [^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n\n",yytext);}
-
 %%
