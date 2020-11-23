@@ -119,7 +119,11 @@ sentencia:  sentenciaDeclaracion
 			| sentenciaRetorno
 			| sentenciaSalto
 			| /* vacio */  ';'
+			| error PuntoYComaOBarraN
 ;
+
+puntoYComaOBarraN: ';'
+			     | '\n'
 
 sentenciaSalto: BREAK ';'
 				| CONTINUE ';'
@@ -184,8 +188,8 @@ listaIdentificadores: declaraId ',' {inicializarNodoConTipo(nodo->tipo, &nodo);}
 ;
 
 listaDeParametros: /* vacio */ 
-					|TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo->principioParametros), &(nodo->finalParametros));} ',' listaDeParametros 
-					| TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo->principioParametros), &(nodo->finalParametros));}
+					|TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo2->principioParametros), &(nodo2->finalParametros));} ',' listaDeParametros 
+					| TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo2->principioParametros), &(nodo2->finalParametros));}
 					| error
 ;
 
@@ -328,6 +332,7 @@ void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, 
 		(*colaParametroFinal)->sgte = p;
 		*colaParametroFinal = p;
 	}
+	printf("Se encolo el parametro %s\n",(*colaParametroFinal)->tipo);
 }
 
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
@@ -335,6 +340,7 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
 		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
 	}
+	printf("El parametro %s coincide, esta bien :)\n",tipoParametroEncontrado);
 	*indice = (*indice)->sgte;
 }
 

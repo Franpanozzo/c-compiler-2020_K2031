@@ -1785,14 +1785,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 187 "TP5.y"
-    {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo->principioParametros), &(nodo->finalParametros));;}
+    {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo2->principioParametros), &(nodo2->finalParametros));;}
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
 #line 188 "TP5.y"
-    {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo->principioParametros), &(nodo->finalParametros));;}
+    {encolarParametro((yyvsp[(1) - (2)].cadena), &(nodo2->principioParametros), &(nodo2->finalParametros));;}
     break;
 
   case 75:
@@ -2137,6 +2137,7 @@ void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, 
 		(*colaParametroFinal)->sgte = p;
 		*colaParametroFinal = p;
 	}
+	printf("Se encolo el parametro %s\n",(*colaParametroFinal)->tipo);
 }
 
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
@@ -2144,6 +2145,7 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
 		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
 	}
+	printf("El parametro %s coincide, esta bien :)\n",tipoParametroEncontrado);
 	*indice = (*indice)->sgte;
 }
 

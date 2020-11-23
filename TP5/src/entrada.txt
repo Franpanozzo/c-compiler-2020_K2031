@@ -1,18 +1,7 @@
-int a = 3, b = 2, c = 0, h = 5, j = 9;
-char d = '3';
-char* cadena;
-long hola(char c)
-{
-    for(int i = 0;i<7;i++){};
-}
+char b = 'a';
+int d = 3;
+char* a = "caca";
+
 void miFuncion(char b,int d, char* cad){}
 
-miFuncion(d,a);
-
-char sumar(int a, int b, int c){
-    return a+b+c;
-}
-cadena = "";
-sumar(a,b,12);
-void noHaceNada(){}
-@
+miFuncion(b,d,a);
