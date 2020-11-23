@@ -2,6 +2,10 @@ char b = 'a';
 int d = 3;
 char* a = "caca";
 
+void int = ;
+
 void miFuncion(char b,int d, char* cad){}
 
 miFuncion(b,d,a);
+
+int a = 4;

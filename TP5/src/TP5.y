@@ -102,8 +102,8 @@ void yyerror (char const *s);
 
 // Cambiar el axioma por una lista de sentencias
 input:    /* vacio */
-        | input sentencia
-		| input error 
+        | sentencia input
+		|  error puntoYComaOBarraN input
 ;
 
 numero: NUM {$<cadena>$ = strdup($<cadena>1);}
@@ -119,8 +119,8 @@ sentencia:  sentenciaDeclaracion
 			| sentenciaRetorno
 			| sentenciaSalto
 			| /* vacio */  ';'
-			| error PuntoYComaOBarraN
 ;
+
 
 puntoYComaOBarraN: ';'
 			     | '\n'
@@ -338,7 +338,8 @@ void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, 
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 {
 	if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
-		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion %s ** \n\n", nodo->identificador);
+		//Printf para ver como compara los parametros
+		printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion ** \n\n");
 	}
 	printf("El parametro %s coincide, esta bien :)\n",tipoParametroEncontrado);
 	*indice = (*indice)->sgte;
@@ -352,7 +353,7 @@ void agregarATS(tNodoTablaDeSimb** nodo)
 
 	if(encontrarEnTablaDeSimb(nodoCopia->identificador))
 	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", encontrarEnTablaDeSimb(nodoCopia->identificador));
+		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", nodoCopia->identificador);
 		//llamar a yyerror();
 		free(*nodo);
 		free(nodo);
@@ -444,7 +445,6 @@ void inicializarNodoConTipo(char* tipo, tNodoTablaDeSimb** nodo)
 void yyerror (char const *s)
 {
   fprintf(stderr, "Error Sintactico en la linea %d \n", lineno);
-  exit(1);
 }
 
 int main ()

@@ -917,7 +917,7 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 63 "../src/TP5.l"
-{printf("\nHay un error lexico, la secuencia %s no es reconocida\n",yytext);}
+{printf("\nHay un error lexico, la secuencia %s no es reconocida\n\n",yytext);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP

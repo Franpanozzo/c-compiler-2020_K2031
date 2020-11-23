@@ -16,3 +16,247 @@ finalX : ';'  | senteciaCompuesta
 listaIdentificadores: TIPO_DATO ID ',' listaDeParametros
                     | TIPO_DATO ID
 
+
+/a.exe
+   SE INICIA LA BUSQUEDA...
+Se agrego a la tabla: a
+   SE INICIA LA BUSQUEDA...
+Leyendo TS: a
+Se agrego a la tabla: b
+   SE INICIA LA BUSQUEDA...
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: c
+   SE INICIA LA BUSQUEDA...
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: h
+   SE INICIA LA BUSQUEDA...
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: j
+   SE INICIA LA BUSQUEDA...
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: d
+ SE INICIA LA BUSQUEDA...
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: cadena
+       SE INICIA LA BUSQUEDA...
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: i
+  SE INICIA LA BUSQUEDA...
+
+Se define una sentencia FOR
+Se va a agregar hola
+SE INICIA LA BUSQUEDA...
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: hola
+     Se va a agregar miFuncion
+SE INICIA LA BUSQUEDA...
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: miFuncion
+SE INICIA LA BUSQUEDA...
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+           SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Se va a agregar sumar
+SE INICIA LA BUSQUEDA...
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: sumar
+
+-->Expresion de asignacion.
+SE INICIA LA BUSQUEDA...
+SE INICIA LA BUSQUEDA...
+Leyendo TS: sumar
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+SE INICIA LA BUSQUEDA...
+Leyendo TS: sumar
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+ Se va a agregar noHaceNada
+SE INICIA LA BUSQUEDA...
+Leyendo TS: sumar
+Leyendo TS: miFuncion
+Leyendo TS: hola
+Leyendo TS: i
+Leyendo TS: cadena
+Leyendo TS: d
+Leyendo TS: j
+Leyendo TS: h
+Leyendo TS: c
+Leyendo TS: b
+Leyendo TS: a
+Se agrego a la tabla: noHaceNada
+
+Hay un error lexico, la secuencia @ no es reconocida
+IDENTIFICADOR   TIPO
+
+        int
+        ─
+        ─
+
+        ─
+
+
+        ─
+
+
+
+        ─
+
+
+
+
+        ─
+
+
+
+
+
+        ─
+
+
+
+
+
+
+        ─
+
+
+
+
+
+
+
+        ─
+
+
+
+
+
+
+
+
+        ─
+
+
+
+
+
+
+
+
+
+        ─
+
+
+
+
+
+
+
+
+
+
+IDENTIFICADOR   RETORNO PARAMETROS
+
+Segmentation fault
