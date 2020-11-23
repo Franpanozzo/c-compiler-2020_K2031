@@ -31,7 +31,7 @@ tNodoTablaDeSimb* inicializarNodo();
 void inicializarNodoConTipo(char* tipo,tNodoTablaDeSimb** nodo);
 tNodoTablaDeSimb* encontrarEnTablaDeSimb(char*);
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice);
-void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal);
+void encolarParametro(char* tipoParametro, char* identificador, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal);
 void agregarATS(tNodoTablaDeSimb** nodo);
 void imprimirListaVariables();
 void imprimirListaParametros(tNodoParametro** principio, tNodoParametro** final);
@@ -134,9 +134,9 @@ sentenciaDeclaracion: TIPO_DATO {inicializarNodoConTipo($<cadena>1, &nodo);} par
 					  | error
 ;
 
-sentenciaSeleccion: IF '(' expresion ')' sentencia {printf("\nSe define una sentencia IF\n");}
-					| IF '(' expresion ')' sentencia ELSE sentencia {printf("\nSe define una sentencia IF seguida de un ELSE\n");}
-					| SWITCH '(' expresion ')' sentencia {printf("\nSe define una sentencia de tipo SWITCH\n");}
+sentenciaSeleccion: IF '(' expresion ')' sentencia {}
+					| IF '(' expresion ')' sentencia ELSE sentencia {}
+					| SWITCH '(' expresion ')' sentencia {}
 					| error 
 ;
 
@@ -152,9 +152,9 @@ constante: numero {$<cadena>$ = strdup($<cadena>1);}
 		   | CCHAR	{$<cadena>$ = strdup($<cadena>1);}
 ;
 
-sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' sentencia {printf("\nSe define una sentencia FOR\n");}
-					| WHILE '(' expresion ')' sentencia {printf("\nSe define una sentencia WHILE\n");}
-					| DO sentencia WHILE '(' expresion ')'';' {printf("\nSe define una sentencia DO WHILE\n");}
+sentenciaIteracion: FOR '(' primeraExpresionFor ';' expresionOpcional ';' expresionOpcional ')' sentencia {}
+					| WHILE '(' expresion ')' sentencia {}
+					| DO sentencia WHILE '(' expresion ')'';' {}
 					| error
 ;
 
@@ -173,7 +173,7 @@ parteFinalDeclaracion: declaraId ';'
 				| error
 ;
 
-sentenciaFuncion: ID {inicializarNodoConTipo(nodo->tipo, &nodo2);nodo2->validar = 1; nodo2->identificador = strdup($<cadena>1);} '(' listaDeParametros ')' declaracionODefFuncion {printf("Se va a agregar %s de tipo %s\n", nodo2->identificador,nodo2->tipo);agregarATS(&nodo2);}
+sentenciaFuncion: ID {inicializarNodoConTipo(nodo->tipo, &nodo2);nodo2->validar = 1; nodo2->identificador = strdup($<cadena>1);} '(' listaDeParametros ')' declaracionODefFuncion {agregarATS(&nodo2);}
 				  | error
 ;
 
@@ -188,8 +188,8 @@ listaIdentificadores: declaraId ',' {inicializarNodoConTipo(nodo->tipo, &nodo);}
 ;
 
 listaDeParametros: /* vacio */ 
-					|TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo2->principioParametros), &(nodo2->finalParametros));} ',' listaDeParametros 
-					| TIPO_DATO ID {encolarParametro($<cadena>1, &(nodo2->principioParametros), &(nodo2->finalParametros));}
+					|TIPO_DATO ID {encolarParametro($<cadena>1, $<cadena>2, &(nodo2->principioParametros), &(nodo2->finalParametros));} ',' listaDeParametros 
+					| TIPO_DATO ID {encolarParametro($<cadena>1, $<cadena>2, &(nodo2->principioParametros), &(nodo2->finalParametros));}
 					| error
 ;
 
@@ -224,7 +224,7 @@ conOSinParametros: listaDeExpresionesInvocacion
 
 //int sumar(int a, int b){}; sumar(2,3);
 
-expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {printf("\n-->Expresion de asignacion.\n");}
+expresionDeAsignacion: ID opAsignacionGeneral listaDeExpresiones {}
 						| error
 ;
 
@@ -237,8 +237,8 @@ declaraId: 	ID {nodo->identificador = strdup($<cadena>1);agregarATS(&nodo);}
 			| error
 ;
 
-listaDeExpresionesInvocacion: expresion {if(nodoActual && indice){if(indice->sgte == NULL) compararConParametro($<cadena>1, &indice); else{printf ("La invocacion no cumple con la cantidad de parametros de %s\n", nodoActual->identificador);indice = NULL;}}else printf("ENTRO POR ACA\n");}
-			 	    | expresion {if(nodoActual && indice){if(indice->sgte != NULL) compararConParametro($<cadena>1, &indice); else{printf("La invocacion no cumple con la cantidad de parametros de %s\n", nodoActual->identificador);indice = NULL;}}} ',' listaDeExpresionesInvocacion
+listaDeExpresionesInvocacion: expresion {if(nodoActual && indice){if(indice->sgte == NULL) compararConParametro($<cadena>1, &indice); else{printf ("(Linea %i) Error de parametros - La invocacion no cumple con la cantidad de parametros de %s\n", lineno, nodoActual->identificador);indice = NULL;}}}
+			 	    | expresion {if(nodoActual && indice){if(indice->sgte != NULL) compararConParametro($<cadena>1, &indice); else{printf("(Linea %i) Error de parametros - La invocacion no cumple con la cantidad de parametros de %s\n", lineno, nodoActual->identificador);indice = NULL;}}} ',' listaDeExpresionesInvocacion
 					| error 
 ;
 
@@ -249,15 +249,19 @@ listaDeExpresiones: expresion
 
 expresion:	 constante {$<cadena>$ = strdup($<cadena>1);}
 			| LITERALCADENA {$<cadena>$ = strdup($<cadena>1);}
-			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarExistenciaYTipo(0,nodoActual2, $<cadena>1); if(nodoActual2) $<cadena>$ = nodoActual2->tipo;}
+			| ID {nodoActual2 = encontrarEnTablaDeSimb($<cadena>1); validarExistenciaYTipo(0,nodoActual2, $<cadena>1); if(nodoActual2 && nodoActual2->validar == 0) $<cadena>$ = nodoActual2->tipo; else  $<cadena>$ = "nodeclarada"}
 			| expresionDeAsignacion
-			| expresion '+' expresion	{if(strcmp($<cadena>1, $<cadena>3)){
-											printf("(Linea %i) Error de tipos - no se puede hacer la suma entre %s y %s\n", lineno, $<cadena>1, $<cadena>3);
-										}
-										else
-										{
-											strcpy($<cadena>$, $<cadena>1);
-										}
+			| expresion '+' expresion	{
+											if(strcmp($<cadena>1, "nodeclarada") != 0 && strcmp($<cadena>3, "nodeclarada") != 0)
+											{
+												if(strcmp($<cadena>1, $<cadena>3)){
+													printf("(Linea %i) Error de tipos - no se puede hacer la suma entre %s y %s\n", lineno, $<cadena>1, $<cadena>3);
+												}
+												else
+												{
+													strcpy($<cadena>$, $<cadena>1);
+												}
+											}
 										}
 			| expresion '-' expresion	
 			| expresion '*' expresion
@@ -275,6 +279,8 @@ expresion:	 constante {$<cadena>$ = strdup($<cadena>1);}
 			| expresion '>' expresion
 			| expresion MENORIGUAL expresion
 			| expresion MAYORIGUAL expresion
+			| expresion IGUALIGUAL expresion
+			| expresion NOIGUAL expresion
 			| invocacionFuncion
 			| error 
 ;
@@ -295,34 +301,39 @@ expresionUnaria: '-' expresion
 void validarExistenciaYTipo(int a,tNodoTablaDeSimb* nodoActual, char* identificador){
 	if(nodoActual){
 		if(a != nodoActual->validar){
-			printf("El identificador %s no corresponde con su uso %i",identificador, nodoActual->validar); //que rompa y no siga analizando
+			printf("(Linea %i) Error - El identificador %s no corresponde con su uso %i\n",lineno, identificador, nodoActual->validar); //que rompa y no siga analizando
 		}
 	}
 	else if(a)
 	{
-		printf("No se encuentra la funcion declarada con el indentificador %s\n", identificador);
+		printf("(Linea %i) Error - No se encuentra la funcion declarada con el indentificador %s\n", lineno, identificador);
 	}
-	else printf("No existe una variable declarada con ese identificador %s\n", identificador);
+	else printf("(Linea %i) Error - No existe una variable declarada con ese identificador %s\n",lineno, identificador);
 }
 
 tNodoTablaDeSimb* encontrarEnTablaDeSimb(char* identificador)
 {
-	printf("SE INICIA LA BUSQUEDA DE %s\n", identificador);
+	//printf("SE INICIA LA BUSQUEDA DE %s\n", identificador);
 	tNodoTablaDeSimb* pAct = tablaDeSimb;
 
 	while(pAct && strcmp(pAct->identificador, identificador))
 	{
-		printf("Leyendo TS: %s\n", pAct->identificador);
+		//printf("Leyendo TS: %s\n", pAct->identificador);
 		pAct = pAct->sgte;
 	}
 	return pAct;
 }
 
-void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal)
+void encolarParametro(char* tipoParametro, char* identificador, tColaParametro* colaParametroInicio, tColaParametro* colaParametroFinal)
 {
 	tColaParametro p = (tColaParametro) malloc(sizeof(tNodoParametro));
 	p->tipo = strdup(tipoParametro);
 	p->sgte = NULL;
+
+	tNodoTablaDeSimb* nodo = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));
+	nodo->identificador = strdup(identificador);
+	inicializarNodoConTipo(p->tipo, &nodo);
+	agregarATS(&nodo);
 
 	if(*colaParametroInicio == NULL){
 		*colaParametroInicio = p;
@@ -332,7 +343,7 @@ void encolarParametro(char* tipoParametro, tColaParametro* colaParametroInicio, 
 		(*colaParametroFinal)->sgte = p;
 		*colaParametroFinal = p;
 	}
-	printf("Se encolo el parametro %s\n",(*colaParametroFinal)->tipo);
+	//printf("Se encolo el parametro %s\n",(*colaParametroFinal)->tipo);
 }
 
 void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
@@ -340,8 +351,8 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 	if(tipoParametroEncontrado)
 	{
 		if(strcmp((*indice)->tipo, tipoParametroEncontrado)){
-			printf("TS: %s - PARAMETRO LEIDO: %s\n", (*indice)->tipo, tipoParametroEncontrado);
-			printf("** ERROR: La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion ** \n\n");
+			//printf("TS: %s - PARAMETRO LEIDO: %s\n", (*indice)->tipo, tipoParametroEncontrado);
+			printf("(Linea %i) Error de parametros - La invocacion no corresponde con los tipos de parametros que hay en la declaracion de la funcion\n", lineno);
 		}
 	}
 	*indice = (*indice)->sgte;	
@@ -350,20 +361,24 @@ void compararConParametro(char* tipoParametroEncontrado, tColaParametro* indice)
 
 void agregarATS(tNodoTablaDeSimb** nodo)
 {
+	//printf("Se va a agregar un identificador a la tabla en la linea %i", lineno);
+	//printf(" - Indentificador : %s\n", (*nodo)->identificador);
 	tNodoTablaDeSimb* nodoCopia = (tNodoTablaDeSimb*) malloc(sizeof(tNodoTablaDeSimb));
-	(*nodoCopia) = (**nodo);
+	//printf("Se va a hacer la copia\n");
+	(*nodoCopia) = (**nodo); 
+	//printf("Copiado exitosamente\n");
 
 	if(encontrarEnTablaDeSimb(nodoCopia->identificador))
 	{
-		printf("** ERROR: Doble declaracion de la variable %s ** \n\n", nodoCopia->identificador);
+		printf("(Linea %i) Error de doble declaracion - El identificador %s ya fue declarado anteriormente\n", lineno, nodoCopia->identificador);
 		//llamar a yyerror();
-		free(*nodo);
 		free(nodo);
 		return;
 	}
+	//printf("AGREGANDO---\n");
 	nodoCopia->sgte = tablaDeSimb;
 	tablaDeSimb = nodoCopia;
-	printf("Se agrego a la tabla: %s\n", nodoCopia->identificador);
+	//printf("Se agrego a la tabla: %s\n", nodoCopia->identificador);
 }
 
 
@@ -438,7 +453,7 @@ void inicializarNodoConTipo(char* tipo, tNodoTablaDeSimb** nodo)
 
 void yyerror (char const *s)
 {
-  fprintf(stderr, "Error Sintactico en la linea %d \n", lineno);
+  fprintf(stderr, "(Linea %i) Error Sintactico\n", lineno);
 }
 
 int main ()

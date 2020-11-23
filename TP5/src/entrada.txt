@@ -1,13 +1,45 @@
-char b = 'a';
-int d = 3;
-//char* a = "caca";
+void miFuncion(char b,int d, char* cad){
+    while(d < 3){
+        h = d+q;
+        d++;
+    }
+    d + 5+6+6+7+8+9+569;
+}
 
-void int = ;
+int sumatoria(int b,int s){
+    return b + s;
+}
+int d = 3, q = 2, h = 1;
+int main(){
+    @
+    char b = 'a';
+    
+    //char* a = "caca";
+    @
+    if(d>5){
+    sumatoria(d,2);
+    }
+    else{
+        sumatoria(d,h);
+    }
+    char b = 'a';
+    "si" 8 void int = ;
 
-b + d;
+    b + d;
 
-void miFuncion(char b,int d, char* cad){}
+    for(int i = 0;i<7;i++){
+        # int h =44; // deberia leer hasta ;
+        @@ 
+        while(5+64 == 10)
+        {
+            int hola =2;
+            int _identificador = 0;
+        }
+    }
+    miFuncion(b,d, h, h, h);
+    q = sumatoria(d,h);
 
-miFuncion(b,d);
-
-int a = 4;
+    int 48 = 3;
+    #
+    int a = 4;
+}

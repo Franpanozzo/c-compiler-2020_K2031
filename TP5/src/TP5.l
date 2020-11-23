@@ -8,6 +8,17 @@
 #include "TP5.tab.h"
 
 int lineno = 1;
+int contarSaltos(char* entrada)
+{
+    int contador = 0;
+    while((*entrada) != '\0')
+    {
+        if((*entrada) == '\n') contador++;
+        entrada ++;
+    }
+
+    return contador;
+}
 
 %}
 
@@ -42,7 +53,7 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 "default" {return DEFAULT;}
 "void" {yylval.cadena = strdup(yytext); return TOKEN_VOID;}
 "return" {return RETURN;}
-"//"[^\n]*$ {;}
+"//"[^\n]*$ {}
 "++" {return OP_INCREMENTO;}
 "--" {return OP_DECREMENTO;}
 "==" {return IGUALIGUAL;}
@@ -58,7 +69,8 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 [a-zA-Z_][a-zA-Z0-9_]* {yylval.cadena = strdup(yytext); return ID;}
 [+-/*=:()^{};&<>] {return yytext[0];}
 \"([^\"]*)\" {yylval.cadena = "char*";return LITERALCADENA;}
-"/*"([^*]|\*+[^/])*\*+\/ {}
+"/*"([^*]|\*+[^/])*\*+\/ {lineno += contarSaltos(yytext);}
 \n {lineno++;}
-[^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n\n",yytext);}
+" " {}
+[^ ] {printf("(Linea %i) Error lexico, la secuencia %s no es reconocida\n",lineno, yytext);}
 %%

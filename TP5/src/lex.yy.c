@@ -285,14 +285,14 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 37
-#define YY_END_OF_BUFFER 38
+#define YY_NUM_RULES 38
+#define YY_END_OF_BUFFER 39
 static yyconst short int yy_accept[128] =
     {   0,
-        0,    0,   38,   36,   35,   37,   36,   36,   32,   36,
+        0,    0,   39,   37,   35,   36,   37,   37,   32,   37,
        32,   32,   32,   32,   32,    2,    1,   32,   32,   32,
        31,   31,   31,   31,   31,   31,   31,   31,   31,   31,
-       31,   31,   36,   22,    0,   33,   23,    0,    0,   29,
+       31,   31,   37,   22,    0,   33,   23,    0,    0,   29,
        19,   27,   20,   28,    0,    0,   30,    4,    2,    0,
         2,    0,    1,    1,   25,   21,   26,   31,   31,   31,
        31,   31,   13,   31,   31,   31,    7,   31,   31,   31,
@@ -467,8 +467,19 @@ char *yytext;
 #include "TP5.tab.h"
 
 int lineno = 1;
+int contarSaltos(char* entrada)
+{
+    int contador = 0;
+    while((*entrada) != '\0')
+    {
+        if((*entrada) == '\n') contador++;
+        entrada ++;
+    }
 
-#line 472 "lex.yy.c"
+    return contador;
+}
+
+#line 483 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -619,11 +630,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 25 "TP5.l"
+#line 36 "TP5.l"
 
 
 
-#line 627 "lex.yy.c"
+#line 638 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -708,87 +719,87 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 28 "TP5.l"
+#line 39 "TP5.l"
 {yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 29 "TP5.l"
+#line 40 "TP5.l"
 {yylval.cadena = "int"; return NUM;} 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 30 "TP5.l"
+#line 41 "TP5.l"
 {yylval.cadena = "int"; return NUM;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 31 "TP5.l"
+#line 42 "TP5.l"
 {yylval.cadena = "float"; return REAL;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 32 "TP5.l"
+#line 43 "TP5.l"
 {yylval.cadena = strdup(yytext); return TIPO_DATO;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 33 "TP5.l"
+#line 44 "TP5.l"
 {yylval.cadena = "char"; return CCHAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 34 "TP5.l"
+#line 45 "TP5.l"
 {return IF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 35 "TP5.l"
+#line 46 "TP5.l"
 {return ELSE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 36 "TP5.l"
+#line 47 "TP5.l"
 {return FOR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 37 "TP5.l"
+#line 48 "TP5.l"
 {return WHILE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 38 "TP5.l"
+#line 49 "TP5.l"
 {return BREAK;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 39 "TP5.l"
+#line 50 "TP5.l"
 {return CASE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 40 "TP5.l"
+#line 51 "TP5.l"
 {return DO;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 41 "TP5.l"
+#line 52 "TP5.l"
 {return SWITCH;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 42 "TP5.l"
+#line 53 "TP5.l"
 {return DEFAULT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 43 "TP5.l"
+#line 54 "TP5.l"
 {yylval.cadena = strdup(yytext); return TOKEN_VOID;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 44 "TP5.l"
+#line 55 "TP5.l"
 {return RETURN;}
 	YY_BREAK
 case 18:
@@ -796,105 +807,110 @@ case 18:
 yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 45 "TP5.l"
-{;}
+#line 56 "TP5.l"
+{}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 46 "TP5.l"
+#line 57 "TP5.l"
 {return OP_INCREMENTO;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 47 "TP5.l"
+#line 58 "TP5.l"
 {return OP_DECREMENTO;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 48 "TP5.l"
+#line 59 "TP5.l"
 {return IGUALIGUAL;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 49 "TP5.l"
+#line 60 "TP5.l"
 {return NOIGUAL;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 50 "TP5.l"
+#line 61 "TP5.l"
 {return YLOGICO;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 51 "TP5.l"
+#line 62 "TP5.l"
 {return OLOGICO;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 52 "TP5.l"
+#line 63 "TP5.l"
 {return MENORIGUAL;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 53 "TP5.l"
+#line 64 "TP5.l"
 {return MAYORIGUAL;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 54 "TP5.l"
+#line 65 "TP5.l"
 {return MASIGUAL;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 55 "TP5.l"
+#line 66 "TP5.l"
 {return MENOSIGUAL;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 "TP5.l"
+#line 67 "TP5.l"
 {return PORIGUAL;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 "TP5.l"
+#line 68 "TP5.l"
 {return DIVIDIDOIGUAL;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 "TP5.l"
+#line 69 "TP5.l"
 {yylval.cadena = strdup(yytext); return ID;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 59 "TP5.l"
+#line 70 "TP5.l"
 {return yytext[0];}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 60 "TP5.l"
+#line 71 "TP5.l"
 {yylval.cadena = "char*";return LITERALCADENA;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 61 "TP5.l"
-{}
+#line 72 "TP5.l"
+{lineno += contarSaltos(yytext);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 62 "TP5.l"
+#line 73 "TP5.l"
 {lineno++;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 63 "TP5.l"
-{printf("\nHay un error lexico, la secuencia %s no es reconocida\n\n",yytext);}
+#line 74 "TP5.l"
+{}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 65 "TP5.l"
+#line 75 "TP5.l"
+{printf("(Linea %i) Error lexico, la secuencia %s no es reconocida\n",lineno, yytext);}
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 76 "TP5.l"
 ECHO;
 	YY_BREAK
-#line 898 "lex.yy.c"
+#line 914 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1780,4 +1796,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 65 "TP5.l"
+#line 76 "TP5.l"
