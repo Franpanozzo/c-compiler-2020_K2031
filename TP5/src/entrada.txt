@@ -1,16 +1,15 @@
-int a = 3, b= 2, c= 0;
+int a = 3, b = 2, c = 0, h = 5, j = 9;
 char d = '3';
 char* cadena;
-int hola(char c)
+long hola(char c)
 {
     for(int i = 0;i<7;i++){};
 }
-
 void miFuncion(char b,int d, char* cad){}
 
-miFuncion(d,a,cadena);
+miFuncion(d,a);
 
-int sumar(int a, int b, int c){
+char sumar(int a, int b, int c){
     return a+b+c;
 }
 cadena = "";

@@ -60,6 +60,6 @@ CONSTANTE_REAL {DIGITO_DECIMAL}+\.{DIGITO_DECIMAL}*{SUFIJO_REAL}?
 \"([^\"]*)\" {yylval.cadena = "char*";return LITERALCADENA;}
 "/*"([^*]|\*+[^/])*\*+\/ {}
 \n {lineno++;}
-[^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n",yytext);}
+[^ ] {printf("\nHay un error lexico, la secuencia %s no es reconocida\n\n",yytext);}
 
 %%
