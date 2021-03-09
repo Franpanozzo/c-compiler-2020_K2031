@@ -378,7 +378,7 @@ void agregarATS(tNodoTablaDeSimb** nodo)
 	//printf("AGREGANDO---\n");
 	nodoCopia->sgte = tablaDeSimb;
 	tablaDeSimb = nodoCopia;
-	//printf("Se agrego a la tabla: %s\n", nodoCopia->identificador);
+	//printf("Se agrego a la tabla: %s\n", nodoCopia->identificador);;
 }
 
 
